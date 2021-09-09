@@ -27,6 +27,7 @@
   (b/delete {:path "target"}))
 
 (defn jar [_]
+  (println "Producing jar")
   (b/write-pom {:class-dir class-dir
                 :lib lib
                 :version version
@@ -37,6 +38,15 @@
                :target-dir class-dir})
   (b/jar {:class-dir class-dir
           :jar-file jar-file}))
+
+(defn install
+  [_]
+  (b/install {:basis basis
+              :lib lib
+              :version version
+              :jar-file jar-file
+              :class-dir class-dir})
+  (println "Installed" lib version "in local maven repo."))
 
 (def uber-basis
   (b/create-basis {:project "deps.edn"

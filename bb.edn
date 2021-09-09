@@ -7,14 +7,18 @@
                                     "Windows"))
     (def uberjar "target/test.jar"))
 
-  clean (fs/delete-tree "target")
+  clean {:doc "Clean target dir"
+         :task (fs/delete-tree "target")}
 
-  compile (clojure "-T:build compile")
+  jar {:doc "Build jar"
+       :task (clojure "-T:build jar")}
 
-  jar (clojure "-T:build jar")
+  install {:doc "Install jar in local maven repo"
+           :task (clojure "-T:build intall")}
 
-  uber (when (seq (fs/modified-since uberjar ["deps.edn" "src" "test"]))
-         (clojure "-T:build uber"))
+  uber {:doc "Build uberjar for testing."
+        :task (when (seq (fs/modified-since uberjar ["deps.edn" "src" "test"]))
+                (clojure "-T:build uber"))}
 
   graalvm {:doc "Checks GRAALVM_HOME env var"
            :task
@@ -46,5 +50,6 @@
                        "-H:Name=native-test")))}
 
   native-image-test
-  {:depends [native-image]
+  {:doc "Run integration test"
+   :depends [native-image]
    :task    (shell "./native-test")}}}
