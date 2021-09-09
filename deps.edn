@@ -1,0 +1,4 @@
+{:deps {org.graalvm.nativeimage/svm {:mvn/version "21.2.0"}}
+ :aliases
+ {:build {:deps {io.github.clojure/tools.build {:git/tag "v0.2.2" :git/sha "3049217"}}
+          :ns-default build}}}
