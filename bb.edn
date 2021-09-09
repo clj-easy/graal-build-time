@@ -14,7 +14,7 @@
        :task (clojure "-T:build jar")}
 
   install {:doc "Install jar in local maven repo"
-           :task (clojure "-T:build intall")}
+           :task (clojure "-T:build install")}
 
   uber {:doc "Build uberjar for testing"
         :task (when (seq (fs/modified-since uberjar ["deps.edn" "src" "test"]))
