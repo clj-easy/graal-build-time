@@ -11,7 +11,7 @@
          (not (str/starts-with? nm "clojure"))
          (str/ends-with? nm "__init.class"))
     (-> nm
-        (str/replace "__init.class" "")
+        (str/replace #"/.*__init.class$" "")
         (str/replace "/" "."))))
 
 (defn packages-from-jar
@@ -36,11 +36,12 @@
     packages))
 
 (defn -packageList [paths]
-  (into-array (cons "clojure"
-                    (mapcat (fn [path]
-                              (if (str/ends-with? (str path) ".jar")
-                                (packages-from-jar path)
-                                (packages-from-dir path))) paths))))
+  (into-array (distinct
+               (cons "clojure"
+                     (mapcat (fn [path]
+                               (if (str/ends-with? (str path) ".jar")
+                                 (packages-from-jar path)
+                                 (packages-from-dir path))) paths)))))
 
 (defn -packageListStr [pl]
   (str/join ", " pl))
