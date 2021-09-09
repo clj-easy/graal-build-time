@@ -1,2 +1,5 @@
 /target
 /.cpcache
+/native-test
+/native-test.build_artifacts.txt
+/test.build_artifacts.txt

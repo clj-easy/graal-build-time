@@ -9,6 +9,7 @@
 (def jar-file (format "target/%s-%s.jar" (name lib) version))
 
 (defn compile [_]
+  (println "Compiling Java.")
   (b/javac {:src-dirs ["src"]
             :class-dir class-dir
 	    :basis basis
@@ -29,3 +30,19 @@
   (b/jar {:class-dir class-dir
           :jar-file jar-file}))
 
+(def uber-basis
+  (b/create-basis {:project "deps.edn"
+                   :aliases [:test]}))
+
+(defn uber [_]
+  (println "Building test uberjar.")
+  (compile {})
+  (println "Compiling Clojure.")
+  (b/compile-clj {:basis uber-basis
+                  :src-dirs ["src" "test"]
+                  :class-dir class-dir})
+  (println "Building uberjar.")
+  (b/uber {:class-dir class-dir
+           :uber-file "target/test.jar"
+           :basis uber-basis
+           :main 'clj-easy.graal-build-time.main}))

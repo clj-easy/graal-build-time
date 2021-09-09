@@ -1,2 +1,49 @@
-{:tasks {compile (clojure "-T:build compile")
-         jar (clojure "-T:build jar")}}
+{:tasks {:requires ([babashka.fs :as fs]
+                    [clojure.string :as str])
+         :init
+         (do
+           (def windows? (str/starts-with? (System/getProperty "os.name")
+                                           "Windows"))
+           (def uberjar "target/test.jar"))
+
+         clean (fs/delete-tree "target")
+
+         compile (clojure "-T:build compile")
+
+         jar (clojure "-T:build jar")
+
+         uber (when (seq (fs/modified-since uberjar ["deps.edn" "src" "test"]))
+                (clojure "-T:build uber"))
+
+         graalvm {:doc "Checks GRAALVM_HOME env var"
+                  :task
+                  (let [env (System/getenv "GRAALVM_HOME")]
+                    (assert env "Set GRAALVM_HOME")
+                    env)}
+
+         native-image
+         {:doc "Builds native image"
+          :depends [graalvm uber]
+          :task (when (seq (fs/modified-since "native-test"
+                                              uberjar))
+                  (do
+                    (shell (str (fs/file graalvm
+                                         "bin"
+                                         (if windows?
+                                           "gu.cmd"
+                                           "gu")))
+                           "install" "native-image")
+                    (shell (str (fs/file graalvm
+                                         "bin"
+                                         (if windows?
+                                           "native-image.cmd"
+                                           "native-image")))
+                           ;; note: we are omitting --initialize-at-build-time
+                           "-jar" "target/test.jar"
+                           "--no-fallback"
+                           "--no-server"
+                           "-H:Name=native-test")))}
+
+         native-image-test
+         {:depends [native-image]
+          :task (shell "./native-test")}}}
