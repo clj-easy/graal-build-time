@@ -29,16 +29,16 @@ Running `native-image-test` will:
 - Make a native image named `native-test` out of it. Notice in the output:
 
     ```
-    [native-test:67818]    classlist:   1,173.31 ms,  0.96 GB
-    [native-test:67818]        (cap):   2,913.21 ms,  0.96 GB
-    Registering build time packages.
-    [native-test:67818]        setup:   4,250.75 ms,  0.96 GB
-    [native-test:67818]     (clinit):     183.05 ms,  1.74 GB
+    [native-test:73977]    classlist:   1,082.78 ms,  0.96 GB
+    [native-test:73977]        (cap):   1,431.59 ms,  0.96 GB
+    Registering packages for build time initialization: clojure, clj_easy
+    [native-test:73977]        setup:   2,882.60 ms,  0.96 GB
+    [native-test:73977]     (clinit):     183.20 ms,  1.74 GB
     ```
 
-    The `Registering build time packages.` part is coming from this library.  Note
-    that the native image build omits `--initialize-at-build-time`, that is taken
-    care of by this library.
+    The `Registering packages for build time initialization` line is coming from
+    this library.  Note that the native image build omits
+    `--initialize-at-build-time`, that is taken care of by this library.
 
 - Run the binary `native-test` as a test. A zero exit code means that the native
   image runs well (and hello world was printed as another way to convince

@@ -8,8 +8,10 @@ public class InitAtBuildTimeFeature implements Feature {
 
     @Override
     public void duringSetup(DuringSetupAccess access) {
-        System.out.println("Registering build time packages.");
-        RuntimeClassInitialization.initializeAtBuildTime("clojure", "");
+        String[] packages = clj_easy.graal_build_time.packageList();
+        String packagesStr = clj_easy.graal_build_time.packageListStr(packages);
+        System.out.println("Registering packages for build time initialization: " + packagesStr);
+        RuntimeClassInitialization.initializeAtBuildTime(packages);
     }
 
 }
