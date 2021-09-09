@@ -1,4 +1,5 @@
 (ns build
+  (:refer-clojure :exclude [compile])
   (:require [clojure.tools.build.api :as b]))
 
 (def lib 'com.github.clj-easy/graal-build-time)
@@ -8,7 +9,7 @@
 (def jar-file (format "target/%s-%s.jar" (name lib) version))
 
 (defn compile [_]
-  (b/javac {:src-dirs ["java"]
+  (b/javac {:src-dirs ["src"]
             :class-dir class-dir
 	    :basis basis
 	    :javac-opts ["-source" "8" "-target" "8"]}))

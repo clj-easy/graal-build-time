@@ -1,0 +1,2 @@
+{:tasks {compile (clojure "-T:build compile")
+         jar (clojure "-T:build jar")}}
