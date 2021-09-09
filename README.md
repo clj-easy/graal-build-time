@@ -21,7 +21,7 @@ Running `native-image-test` will:
 
 - Build this library
 - Produce an uberjar with a main which prints `"Hello world"`
-- Make a native image out of it. Notice in the output:
+- Make a native image named `native-test` out of it. Notice in the output:
 
     ```
     [native-test:67818]    classlist:   1,173.31 ms,  0.96 GB
@@ -35,8 +35,9 @@ Running `native-image-test` will:
     that the native image build omits `--initialize-at-build-time`, that is taken
     care of by this library.
 
-- Run the native-image as a test. A zero exit code means that the native image
-  runs well (and hello world was printed as another way to convince yourself).
+- Run the binary `native-test` as a test. A zero exit code means that the native
+  image runs well (and hello world was printed as another way to convince
+  yourself).
 
 # License
 
