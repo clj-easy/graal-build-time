@@ -41,6 +41,7 @@
 
 (defn install
   [_]
+  (jar {})
   (b/install {:basis basis
               :lib lib
               :version version
