@@ -13,13 +13,13 @@ Run `bb tasks` for all relevant project tasks:
 $ bb tasks
 The following tasks are available:
 
-clean
-compile
-jar
-uber
+clean             Clean target dir
+jar               Build jar
+install           Install jar in local maven repo
+uber              Build uberjar for testing.
 graalvm           Checks GRAALVM_HOME env var
 native-image      Builds native image
-native-image-test
+native-image-test Run integration test
 ```
 
 Running `native-image-test` will:
