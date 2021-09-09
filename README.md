@@ -1,7 +1,7 @@
 # graal-build-time
 
-From GraalVM 22 onwards, the `--initialize-at-build-time` option will
-deprecated. This means you will have to list every package that you want to
+From GraalVM 22 onwards, the `native-image` `--initialize-at-build-time` option
+will deprecated. This means you will have to list every package that you want to
 initialize at build time separately. Classes created by Clojure (currently) need
 to be initialized at build time. This library automatically registers classes
 created by Clojure as such, so you don't have to.
