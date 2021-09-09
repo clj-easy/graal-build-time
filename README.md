@@ -1,6 +1,10 @@
 # graal-build-time
 
-A library which forces Clojure packages to be initialized at build time within a native image build.
+From GraalVM 22 onwards, the `--initialize-at-build-time` option will
+deprecated. This means you will have to list every package that you want to
+initialize at build time separately. Classes created by Clojure (currently) need
+to be initialized at build time. This library automatically registers classes
+created by Clojure as such, so you don't have to.
 
 Run `bb tasks` for all relevant project tasks:
 
@@ -41,4 +45,6 @@ Running `native-image-test` will:
 
 # License
 
-TODO
+Licensed under the MIT license, see LICENSE.
+
+Copyright © 2021 Michiel Borkent, Eric Dallo and contributors.
