@@ -1,3 +1,6 @@
+[![Clojars Project](https://img.shields.io/clojars/v/com.github.clj-easy/graal-build-time.svg)](https://clojars.org/com.github.clj-easy/graal-build-time)
+[![Slack community](https://img.shields.io/badge/Slack-chat-blue?style=flat-square)](https://clojurians.slack.com/archives/C02DQFVS0MC)
+
 # graal-build-time
 
 From GraalVM 22 onwards, the `native-image` global `--initialize-at-build-time`
