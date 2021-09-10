@@ -6,6 +6,8 @@
 (def version (format "0.0.%s" (b/git-count-revs nil)))
 (def class-dir "target/classes")
 (def basis (b/create-basis {:project "deps.edn"}))
+(def with-svm-basis (b/create-basis {:project "deps.edn"
+                                     :aliases [:svm]}))
 (def jar-file (format "target/%s-%s.jar" (name lib) version))
 
 (defn compile-clojure [_]
@@ -20,7 +22,7 @@
   (compile-clojure {:basis basis})
   (b/javac {:src-dirs ["src"]
             :class-dir class-dir
-            :basis basis
+            :basis with-svm-basis
             :javac-opts ["-source" "8" "-target" "8"]}))
 
 (defn clean [_]
