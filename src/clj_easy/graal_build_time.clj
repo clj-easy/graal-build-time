@@ -6,22 +6,33 @@
    :methods [^{:static true} [packageList [java.util.List] "[Ljava.lang.String;"]
              ^{:static true} [packageListStr ["[Ljava.lang.String;"] String]]))
 
-(defn keep-fn [nm]
-  (when (and
-         (not (str/starts-with? nm "clojure"))
-         (str/ends-with? nm "__init.class"))
-    (-> nm
-        (str/replace #"/.*__init.class$" "")
-        (str/replace "/" "."))))
+(defn jar-file-entry->package [nm]
+  (->> (str/split nm (re-pattern (System/getProperty "file.separator")))
+       drop-last
+       (str/join ".")))
+
+(defn ^:private consider-jar-file-entry? [nm]
+  (and (not (str/starts-with? nm (str "clojure" (System/getProperty "file.separator"))))
+       (str/ends-with? nm "__init.class")))
+
+(defn ^:private contains-parent? [packages package]
+  (some #(and (not= % package)
+              (str/starts-with? package %))
+        packages))
 
 (defn packages-from-jar
   [^Path jar-file]
   (with-open [jar (JarFile. (.toFile jar-file))]
     (let [entries (enumeration-seq (.entries jar))
-          packages (keep (fn [^JarFile$JarFileEntry x]
-                           (let [nm (.getName x)]
-                             (keep-fn nm))) entries)]
-      (vec packages))))
+          packages (->> entries
+                        (map #(.getName ^JarFile$JarFileEntry %))
+                        (filter consider-jar-file-entry?)
+                        (map jar-file-entry->package)
+                        (remove str/blank?))
+          unique-packages (->> packages
+                               (remove (partial contains-parent? packages))
+                               set)]
+      unique-packages)))
 
 (defn packages-from-dir [^Path dir]
   ;; TODO: this needs unit tests as it's not exercises in integration test
@@ -32,7 +43,9 @@
                            (.relativize dir path)))
                        files)
         names (map str relatives)
-        packages (keep keep-fn names)]
+        packages (->> names
+                      (filter consider-jar-file-entry?)
+                      (map jar-file-entry->package))]
     packages))
 
 (defn -packageList [paths]
