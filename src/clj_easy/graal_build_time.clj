@@ -7,9 +7,12 @@
              ^{:static true} [packageListStr ["[Ljava.lang.String;"] String]]))
 
 (defn jar-file-entry->package [nm]
-  (->> (str/split nm (re-pattern (System/getProperty "file.separator")))
-       drop-last
-       (str/join ".")))
+  (let [package (->> (str/split nm (re-pattern (System/getProperty "file.separator")))
+                     drop-last
+                     (str/join "."))]
+    (when (str/blank? package)
+      (println "WARN: Single segment package found for class:" nm ".This class has no package and it will not be added to the result packages."))
+    package))
 
 (defn ^:private consider-jar-file-entry? [nm]
   (and (not (str/starts-with? nm (str "clojure" (System/getProperty "file.separator"))))
