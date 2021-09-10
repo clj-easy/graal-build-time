@@ -1,45 +1,47 @@
 (ns build
   (:refer-clojure :exclude [compile])
-  (:require [clojure.tools.build.api :as b]))
+  (:require [build-shared :as bs :refer [lib]]
+            [clojure.tools.build.api :as b]))
 
-(def lib 'com.github.clj-easy/graal-build-time)
-(def version (format "0.0.%s" (b/git-count-revs nil)))
 (def class-dir "target/classes")
 (def basis (b/create-basis {:project "deps.edn"}))
 (def with-svm-basis (b/create-basis {:project "deps.edn"
                                      :aliases [:svm]}))
-(def jar-file (format "target/%s-%s.jar" (name lib) version))
-
-(defn compile-clojure [_]
-  (println "Compiling Clojure.")
-  (b/compile-clj {:basis basis
-                  :src-dirs ["src"]
-                  :class-dir class-dir}))
-
-(defn compile-java
-  [_]
-  (println "Compiling Java.")
-  (compile-clojure {:basis basis})
-  (b/javac {:src-dirs ["src"]
-            :class-dir class-dir
-            :basis with-svm-basis
-            :javac-opts ["-source" "8" "-target" "8"]}))
+(def version @bs/version)
+(def jar-file @bs/jar-file)
 
 (defn clean [_]
-  (b/delete {:path "target"}))
+  (bs/clean {}))
+
+(defn compile-sources [_]
+  (println "Compiling sources")
+  (if (bs/needs-compile?)
+    (do
+      (b/compile-clj {:basis basis
+                      :src-dirs bs/sources
+                      :class-dir class-dir})
+      (b/javac {:src-dirs bs/sources
+                :class-dir class-dir
+                :basis with-svm-basis
+                :javac-opts ["-source" "8" "-target" "8"]})
+      (println "Done compiling sources."))
+    (println "All up to date, nothing to compile.")))
 
 (defn jar [_]
-  (println "Producing jar")
-  (b/write-pom {:class-dir class-dir
-                :lib lib
-                :version version
-                :basis basis
-                :src-dirs ["src"]})
-  (compile-java {})
-  (b/copy-dir {:src-dirs ["src" "resources"]
-               :target-dir class-dir})
-  (b/jar {:class-dir class-dir
-          :jar-file jar-file}))
+  (if (bs/needs-jar?)
+    (do (println "Producing jar")
+        (b/write-pom {:class-dir class-dir
+                      :lib lib
+                      :version version
+                      :basis basis
+                      :src-dirs ["src"]})
+        (compile-sources {})
+        (b/copy-dir {:src-dirs ["src" "resources"]
+                     :target-dir class-dir})
+        (b/jar {:class-dir class-dir
+                :jar-file jar-file})
+        (println "Done building jar."))
+    (println "Jar is up to date.")))
 
 (defn install
   [_]
@@ -57,7 +59,8 @@
 
 (defn uber [_]
   (println "Building test uberjar.")
-  (compile-java {:basis uber-basis})
+  (compile-sources {:basis uber-basis})
+  (println "Compiling extra sources.")
   (b/compile-clj {:basis uber-basis
                   :src-dirs ["test"]
                   :class-dir class-dir})
