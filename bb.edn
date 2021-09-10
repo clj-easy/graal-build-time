@@ -12,7 +12,7 @@
          :task (bs/clean {})}
 
   compile-clojure {:doc "Compile clojure sources"
-                   :task (when (bs/compile-clojure?)
+                   :task (when (bs/needs-compile?)
                            (clojure "-T:build compile-clojure"))}
 
   jar {:doc "Build jar"
