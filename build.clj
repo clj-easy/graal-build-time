@@ -68,7 +68,8 @@
   (println "Compiling extra sources.")
   (b/compile-clj {:basis uber-basis
                   :src-dirs ["test"]
-                  :class-dir class-dir})
+                  :class-dir class-dir
+                  :ns-compile '[clj-easy.graal-build-time.main]})
   (println "Building uberjar.")
   (b/uber {:class-dir class-dir
            :uber-file "target/test.jar"
