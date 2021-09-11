@@ -1,0 +1,39 @@
+name: Test
+
+on:
+  - push
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+        gu-binary:
+          - gu
+          - gu.cmd
+        exclude:
+          - os: ubuntu-latest
+            gu-binary: gu.cmd
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup GraalVM
+        uses: DeLaGuardo/setup-graalvm@4.0
+        with:
+          graalvm: "21.2.0"
+          java: java11
+
+      - name: Install native-image
+        run: ${{ matrix.gu-binary }} install native-image
+
+      - name: Setup Babashka
+        uses: turtlequeue/setup-babashka@v1.3.0
+        with:
+          babashka-version: 0.6.0
+
+      - name: Run native tests
+        run: bb native-image-test
