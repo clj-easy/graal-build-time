@@ -33,7 +33,7 @@
              env)}
 
   deploy {:doc "Deploys to clojars"
-          :task (clojure "-T:deploy")}
+          :task (clojure "-T:build deploy")}
 
   native-image
   {:doc     "Builds native image"
