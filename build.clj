@@ -34,7 +34,7 @@
 
 (defn jar [_]
   (if (bs/needs-jar?)
-    (do (println "Producing jar")
+    (do (println "Producing jar:" jar-file)
         (b/write-pom {:class-dir class-dir
                       :lib lib
                       :version version
@@ -78,6 +78,7 @@
 (defn deploy [opts]
   (println "All set for deployment 🚀🚀")
   (jar {})
+  (println "Deploying version" jar-file "to Clojars.")
   (dd/deploy (merge {:installer :remote
                      :artifact jar-file
                      :pom-file (b/pom-path {:lib lib :class-dir class-dir})}
