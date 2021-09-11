@@ -43,6 +43,7 @@
 
 (defn- nses-in-topo
   [dirs]
+  (prn :ns-topo :dir dirs)
   (let [ns-decls (mapcat #(find/find-ns-decls-in-dir (api/resolve-path %)) dirs)
         ns-candidates (set (map parse/name-from-ns-decl ns-decls))
         graph (reduce
@@ -54,6 +55,7 @@
                       (parse/deps-from-ns-decl decl))))
                 (dependency/graph)
                 ns-decls)]
+    (prn :topo-done)
     (->> graph
       dependency/topo-sort
       (filter ns-candidates) ;; only keep stuff in these dirs
@@ -63,13 +65,16 @@
 (defn compile-clj
   [{:keys [basis src-dirs compile-opts ns-compile filter-nses class-dir sort] :as params
     :or {sort :topo}}]
+  (prn :params params)
   (let [working-dir (.toFile (Files/createTempDirectory "compile-clj" (into-array FileAttribute [])))]
     (let [{:keys [classpath]} basis
           compile-dir-file (file/ensure-dir (api/resolve-path class-dir))
           _ (prn :compile-dir-file compile-dir-file)
           nses (cond
                  (seq ns-compile) ns-compile
-                 (= sort :topo) (nses-in-topo src-dirs)
+                 (= sort :topo) (do
+                                  (println "topo-sorting")
+                                  (nses-in-topo src-dirs))
                  (= sort :bfs) (nses-in-bfs src-dirs)
                  :else (throw (ex-info "Missing :ns-compile or :sort order in compile-clj task" {})))
           working-compile-dir (file/ensure-dir (jio/file working-dir "compile-clj"))
