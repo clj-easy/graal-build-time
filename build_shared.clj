@@ -5,7 +5,7 @@
 (def target "target")
 (def lib 'com.github.clj-easy/graal-build-time)
 (def version (str/trim (slurp "resources/clj-easy/graal-build-time-version.txt")))
-(def jar-file (delay (format "target/%s-%s.jar" (name lib) @version)))
+(def jar-file (format "target/%s-%s.jar" (name lib) version))
 (def uberjar "target/test.jar")
 (def sources ["src"])
 
@@ -16,5 +16,5 @@
   (seq (fs/modified-since target sources)))
 
 (defn needs-jar? []
-  (or (seq (fs/modified-since target @jar-file))
+  (or (seq (fs/modified-since target jar-file))
       (needs-compile?)))

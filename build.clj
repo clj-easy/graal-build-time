@@ -12,8 +12,8 @@
 (def basis (b/create-basis {:project "deps.edn"}))
 (def with-svm-basis (b/create-basis {:project "deps.edn"
                                      :aliases [:svm]}))
-(def version @bs/version)
-(def jar-file @bs/jar-file)
+(def version bs/version)
+(def jar-file bs/jar-file)
 
 (defn clean [_]
   (bs/clean {}))
