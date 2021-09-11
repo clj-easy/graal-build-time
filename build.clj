@@ -20,14 +20,17 @@
     (do
       (prn "basis:")
       (prn (keys (:classpath basis)))
+      (println "Compiling Clojure sources.")
       (b/compile-clj {:basis basis
                       :src-dirs bs/sources
                       :class-dir class-dir})
+      (println "Done compiling Clojure sources.")
+      (println "Compiling java sources.")
       (b/javac {:src-dirs bs/sources
                 :class-dir class-dir
                 :basis with-svm-basis
                 :javac-opts ["-source" "8" "-target" "8"]})
-      (println "Done compiling sources."))
+      (println "Done compiling java sources."))
     (println "All up to date, nothing to compile.")))
 
 (defn jar [_]
