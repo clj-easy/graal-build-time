@@ -2,9 +2,14 @@
  :aliases
  {:svm
   ;; this library is "provided"
-  {:extra-deps {org.graalvm.nativeimage/svm {:mvn/version "21.2.0"}}}
-  :build {:deps {io.github.clojure/tools.build {:git/tag "v0.2.2" :git/sha "3049217"}
-                 babashka/fs {:mvn/version "0.0.5"}
-                 babashka/process {:mvn/version "0.0.2"}}
-          :ns-default build}
-  :test {:extra-paths ["test"]}}}
+  {:extra-deps {org.graalvm.nativeimage/svm {:mvn/version "21.2.0"}}
+   :build {:deps {io.github.clojure/tools.build {:git/tag "v0.2.2" :git/sha "3049217"}
+                  babashka/fs {:mvn/version "0.0.5"}
+                  babashka/process {:mvn/version "0.0.2"}}
+           :ns-default build}
+   :test {:extra-paths ["test"]}
+   :deploy {:extra-deps {slipset/deps-deploy {:mvn/version "0.1.5"}}
+            :exec-fn deps-deploy.deps-deploy/deploy
+            :exec-args {:installer :remote
+                        :sign-releases? false
+                        :artifact "deps-deploy.jar"}}}}}

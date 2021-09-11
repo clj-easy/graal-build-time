@@ -1,7 +1,10 @@
-name: Test
+name: Test and Deploy
 
 on:
-  - push
+  create:
+    tags:
+      - 'v*'
+  push:
 
 jobs:
   test:
@@ -21,7 +24,7 @@ jobs:
           graalvm: "21.2.0"
           java: java11
 
-      - name: Install bb
+      - name: Setup Babashka
         run: |
           curl -sLO https://raw.githubusercontent.com/babashka/babashka/master/install
           chmod +x install
@@ -29,3 +32,18 @@ jobs:
 
       - name: Run native tests
         run: bb native-image-test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy to clojars
+        env:
+          CLOJARS_USERNAME: lispyclouds
+          CLOJARS_PASSWORD: ${{ secrets.CLOJARS_ORG_TOKEN }}
+        run: bb deploy

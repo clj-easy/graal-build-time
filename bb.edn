@@ -32,6 +32,9 @@
              (assert env "Set GRAALVM_HOME")
              env)}
 
+  deploy {:doc "Deploys to Clojars"
+          :task (clojure "-X:deploy")}
+
   native-image
   {:doc     "Builds native image"
    :depends [graalvm uber]
@@ -65,4 +68,4 @@
                  (str "v" (deref bs/version))))
 
   ,}
-,}
+ ,}
