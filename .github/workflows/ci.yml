@@ -32,6 +32,9 @@ jobs:
           chmod +x install
           ./install --version 0.6.0 --static --dir /usr/local/bin
 
+      - name: Run native tests
+        run: bb native-image-test
+
       - name: Apply Cache
         uses: actions/cache@v2
         with:
@@ -39,9 +42,6 @@ jobs:
             ~/.m2/repository
           key: graal-build-time-${{ hashFiles('deps.edn') }}
           restore-keys: "$graal-build-time-"
-
-      - name: Run native tests
-        run: bb native-image-test
 
   deploy:
     needs: test
@@ -63,6 +63,12 @@ jobs:
           chmod +x install
           ./install --version 0.6.0 --static --dir /usr/local/bin
 
+      - name: Deploy to clojars
+        env:
+          CLOJARS_USERNAME: lispyclouds
+          CLOJARS_PASSWORD: ${{ secrets.CLOJARS_ORG_TOKEN }}
+        run: bb deploy
+
       - name: Apply Cache
         uses: actions/cache@v2
         with:
@@ -70,9 +76,3 @@ jobs:
             ~/.m2/repository
           key: graal-build-time-${{ hashFiles('deps.edn') }}
           restore-keys: "$graal-build-time-"
-
-      - name: Deploy to clojars
-        env:
-          CLOJARS_USERNAME: lispyclouds
-          CLOJARS_PASSWORD: ${{ secrets.CLOJARS_ORG_TOKEN }}
-        run: bb deploy
