@@ -1,0 +1,6 @@
+(defproject com.github.clj-easy/graal-build-time {{version}}
+  :dependencies [[org.graalvm.nativeimage/svm "21.2.0" :scope "provided"]]
+  :aot [clj-easy.graal-build-time]
+  :java-source-paths ["src"]
+  
+)

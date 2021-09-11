@@ -1,4 +1,5 @@
 {:deps {}
+ :paths ["src" "resources"]
  :aliases
  {:svm
   ;; this library is "provided"

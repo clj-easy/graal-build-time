@@ -88,5 +88,12 @@
           :task (when should-release
                   (clojure "-T:build deploy"))}
 
+  lein:version (-> (slurp "resources/clj-easy/graal-build-time-version.txt")
+                   str/trim)
+  lein:bump-version {:depends [lein:version]
+                     :task (spit "project.clj"
+                                 (-> (slurp "project.clj.template")
+                                     (str/replace "{{version}}" (pr-str lein:version))))}
+
   ,}
  ,}
