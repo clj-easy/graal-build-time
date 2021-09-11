@@ -1,9 +1,8 @@
 name: Test and Deploy
 
 on:
-  - push:
-      tags-ignore:
-        - '**'
+  - push
+
 jobs:
   test:
     runs-on: ${{ matrix.os }}
