@@ -1,10 +1,7 @@
 name: Test and Deploy
 
 on:
-  create:
-    tags:
-      - 'v*'
-  push:
+  - push
 
 jobs:
   test:
@@ -24,6 +21,11 @@ jobs:
           graalvm: "21.2.0"
           java: java11
 
+      - name: Setup Clojure CLI
+        uses: DeLaGuardo/setup-clojure@master
+        with:
+          cli: "1.10.3.967"
+
       - name: Setup Babashka
         run: |
           curl -sLO https://raw.githubusercontent.com/babashka/babashka/master/install
@@ -33,6 +35,14 @@ jobs:
       - name: Run native tests
         run: bb native-image-test
 
+      - name: Apply Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+          key: graal-build-time-${{ hashFiles('deps.edn') }}
+          restore-keys: "$graal-build-time-"
+
   deploy:
     needs: test
     runs-on: ubuntu-latest
@@ -41,6 +51,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Setup Clojure CLI
+        uses: DeLaGuardo/setup-clojure@master
+        with:
+          cli: "1.10.3.967"
 
       - name: Setup Babashka
         run: |
@@ -53,3 +68,11 @@ jobs:
           CLOJARS_USERNAME: lispyclouds
           CLOJARS_PASSWORD: ${{ secrets.CLOJARS_ORG_TOKEN }}
         run: bb deploy
+
+      - name: Apply Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+          key: graal-build-time-${{ hashFiles('deps.edn') }}
+          restore-keys: "$graal-build-time-"
