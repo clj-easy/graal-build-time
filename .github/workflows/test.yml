@@ -10,12 +10,6 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-        gu-binary:
-          - gu
-          - gu.cmd
-        exclude:
-          - os: ubuntu-latest
-            gu-binary: gu.cmd
 
     steps:
       - name: Checkout code
@@ -26,9 +20,6 @@ jobs:
         with:
           graalvm: "21.2.0"
           java: java11
-
-      - name: Install native-image
-        run: ${{ matrix.gu-binary }} install native-image
 
       - name: Setup Babashka
         uses: turtlequeue/setup-babashka@v1.3.0
