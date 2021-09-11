@@ -64,7 +64,7 @@
 
 (defn uber [_]
   (println "Building test uberjar.")
-  (compile-sources {:basis uber-basis})
+  (compile-sources {})
   (println "Compiling extra sources.")
   (b/compile-clj {:basis uber-basis
                   :src-dirs ["test"]
