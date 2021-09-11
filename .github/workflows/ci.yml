@@ -1,9 +1,6 @@
 name: Test and Deploy
 
 on:
-  create:
-    tags:
-      - 'v*'
   push:
 
 jobs:
@@ -44,7 +41,6 @@ jobs:
   deploy:
     needs: test
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
       - name: Checkout code
