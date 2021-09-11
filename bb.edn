@@ -32,8 +32,8 @@
              (assert env "Set GRAALVM_HOME")
              env)}
 
-  deploy {:doc "Deploys to Clojars"
-          :task (clojure "-X:deploy")}
+  deploy {:doc "Deploys to clojars"
+          :task (clojure "-T:deploy")}
 
   native-image
   {:doc     "Builds native image"
