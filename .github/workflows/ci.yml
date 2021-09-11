@@ -1,0 +1,49 @@
+name: Test and Deploy
+
+on:
+  create:
+    tags:
+      - 'v*'
+  push:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup GraalVM
+        uses: DeLaGuardo/setup-graalvm@4.0
+        with:
+          graalvm: "21.2.0"
+          java: java11
+
+      - name: Setup Babashka
+        run: |
+          curl -sLO https://raw.githubusercontent.com/babashka/babashka/master/install
+          chmod +x install
+          ./install --version 0.6.0 --static --dir /usr/local/bin
+
+      - name: Run native tests
+        run: bb native-image-test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy to clojars
+        env:
+          CLOJARS_USERNAME: lispyclouds
+          CLOJARS_PASSWORD: ${{ secrets.CLOJARS_ORG_TOKEN }}
+        run: bb deploy

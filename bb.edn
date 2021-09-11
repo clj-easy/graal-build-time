@@ -32,6 +32,9 @@
              (assert env "Set GRAALVM_HOME")
              env)}
 
+  deploy {:doc "Deploys to clojars"
+          :task (clojure "-T:build deploy")}
+
   native-image
   {:doc     "Builds native image"
    :depends [graalvm uber]
@@ -58,4 +61,11 @@
   native-image-test
   {:doc "Run integration test"
    :depends [native-image]
-   :task    (shell "./native-test")}}}
+   :task    (shell "./native-test")}
+
+  tag (do (shell (str "git tag v" (deref bs/version)))
+          (shell "git push --atomic origin main"
+                 (str "v" (deref bs/version))))
+
+  ,}
+ ,}

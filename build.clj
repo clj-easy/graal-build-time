@@ -1,7 +1,8 @@
 (ns build
   (:refer-clojure :exclude [compile])
   (:require [build-shared :as bs :refer [lib]]
-            [clojure.tools.build.api :as b]))
+            [clojure.tools.build.api :as b]
+            [deps-deploy.deps-deploy :as dd]))
 
 (def class-dir "target/classes")
 (def basis (b/create-basis {:project "deps.edn"}))
@@ -69,3 +70,12 @@
            :uber-file "target/test.jar"
            :basis uber-basis
            :main 'clj-easy.graal-build-time.main}))
+
+(defn deploy [opts]
+  (println "All set for deployment 🚀🚀")
+  (jar {})
+  (dd/deploy (merge {:installer :remote
+                     :artifact jar-file
+                     :pom-file (b/pom-path {:lib lib :class-dir class-dir})}
+                    opts))
+  opts)
