@@ -72,23 +72,19 @@
         (shell "git push --atomic origin main"
                (str "v" bs/version)))
 
-  current-tag (->> (shell {:out :string
-                           :continue true} "git describe")
-                   :out
-                   str/trim
-                   (re-matches (re-pattern "^v\\d+\\.\\d+\\.\\d+$")))
-
   current-branch (->> (shell {:out :string} "git rev-parse --abbrev-ref HEAD")
                       :out
                       str/trim)
 
-  should-release {:depends [current-tag current-branch]
-                  :task (and current-tag (= "main" current-branch))}
+  can-release {:depends [current-branch]
+               :task (= "main" current-branch)}
 
   deploy {:doc "Deploys to clojars"
-          :depends [should-release]
-          :task (when should-release
-                  (clojure "-T:build deploy"))}
+          :depends [can-release]
+          :task (when can-release
+                  (tasks/clojure
+                   {:continue true}
+                   "-J-Dclojure.main.report=stderr -T:build deploy"))}
 
   lein:bump-version {:depends [lein:version]
                      :task (spit "project.clj"
