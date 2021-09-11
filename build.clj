@@ -18,8 +18,6 @@
   (println "Compiling sources")
   (if (bs/needs-compile?)
     (do
-      (prn "basis:")
-      (prn (keys (:classpath basis)))
       (println "Compiling Clojure sources.")
       (b/compile-clj {:basis basis
                       :src-dirs bs/sources

@@ -3,8 +3,7 @@
  {:svm
   ;; this library is "provided"
   {:extra-deps {org.graalvm.nativeimage/svm {:mvn/version "21.2.0"}}}
-  :build {:paths ["patch"]
-          :deps {io.github.clojure/tools.build {:git/tag "v0.2.2" :git/sha "1dd9f6f"}
+  :build {:deps {io.github.clojure/tools.build {:git/tag "v0.3.0" :git/sha "e418fc9"}
                  babashka/fs {:mvn/version "0.0.5"}
                  babashka/process {:mvn/version "0.0.2"}
                  io.github.slipset/deps-deploy {:sha "b4359c5d67ca002d9ed0c4b41b710d7e5a82e3bf"}}
