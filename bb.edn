@@ -67,7 +67,7 @@
 
   tag (do
         (shell (str "git tag v" (deref bs/version)))
-        (shell "git push origin main"
+        (shell "git push --atomic origin main"
                (str "v" (deref bs/version))))
 
   current-tag (->> (shell {:out :string
