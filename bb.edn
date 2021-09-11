@@ -38,9 +38,6 @@
              (assert env "Set GRAALVM_HOME")
              env)}
 
-  deploy {:doc "Deploys to clojars"
-          :task (clojure "-T:build deploy")}
-
   native-image
   {:doc     "Builds native image"
    :depends [graalvm uber]
@@ -73,6 +70,23 @@
         (shell (str "git tag v" (deref bs/version)))
         (shell "git push --atomic origin main"
                (str "v" (deref bs/version))))
+
+  current-tag (->> (shell {:out :string} "git describe")
+                   :out
+                   str/trim
+                   (re-matches (re-pattern "^v\\d+\\.\\d+\\.\\d+$")))
+
+  current-branch (->> (shell {:out :string} "git rev-parse --abbrev-ref HEAD")
+                      :out
+                      str/trim)
+
+  should-release {:depends [current-tag current-branch]
+                  :task (and current-tag (= "main" current-branch))}
+
+  deploy {:doc "Deploys to clojars"
+          :depends [should-release]
+          :task (when should-release
+                  (clojure "-T:build deploy"))}
 
   ,}
  ,}
