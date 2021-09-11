@@ -24,6 +24,11 @@ jobs:
           graalvm: "21.2.0"
           java: java11
 
+      - name: Setup Clojure CLI
+        uses: DeLaGuardo/setup-clojure@master
+        with:
+          cli: "1.10.3.967"
+
       - name: Setup Babashka
         run: |
           curl -sLO https://raw.githubusercontent.com/babashka/babashka/master/install
@@ -41,6 +46,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Setup Clojure CLI
+        uses: DeLaGuardo/setup-clojure@master
+        with:
+          cli: "1.10.3.967"
 
       - name: Setup Babashka
         run: |

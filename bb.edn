@@ -6,7 +6,8 @@
   :init
   (do
     (def windows? (str/starts-with? (System/getProperty "os.name")
-                                    "Windows")))
+                                    "Windows"))
+    (defn clojure [& args] (shell (str/join " " (cons "clojure" args)))))
 
   clean {:doc "Clean target dir"
          :task (bs/clean {})}
