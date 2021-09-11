@@ -66,7 +66,8 @@
    :task    (shell "./native-test")}
 
   bump-version (do (load-file "scripts/bump_version.clj")
-                   (shell "git add resources/clj-easy/graal-build-time-version.txt"))
+                   (shell "git add resources/clj-easy/graal-build-time-version.txt")
+                   (shell "git commit -m 'Bump version'"))
 
   tag (do
         (shell (str "git tag v" bs/version))
