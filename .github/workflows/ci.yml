@@ -58,7 +58,7 @@ jobs:
 
       - name: Deploy to clojars
         env:
-          CLOJARS_USERNAME: lispyclouds
+          CLOJARS_USERNAME: borkdude
           CLOJARS_PASSWORD: ${{ secrets.CLOJARS_ORG_TOKEN }}
         run: bb deploy
 
