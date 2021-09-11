@@ -72,6 +72,7 @@
            :main 'clj-easy.graal-build-time.main}))
 
 (defn deploy [opts]
+  (println "All set for deployment 🚀🚀")
   (dd/deploy (merge {:installer :remote
                      :artifact jar-file
                      :pom-file (b/pom-path {:lib lib :class-dir class-dir})}
