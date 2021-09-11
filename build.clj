@@ -23,7 +23,8 @@
       (println "Compiling Clojure sources.")
       (b/compile-clj {:basis basis
                       :src-dirs bs/sources
-                      :class-dir class-dir})
+                      :class-dir class-dir
+                      :ns-compile '[clj-easy.graal-build-time]})
       (println "Done compiling Clojure sources.")
       (println "Compiling java sources.")
       (b/javac {:src-dirs bs/sources
