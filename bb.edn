@@ -71,7 +71,8 @@
         (shell "git push --atomic origin main"
                (str "v" (deref bs/version))))
 
-  current-tag (->> (shell {:out :string} "git describe")
+  current-tag (->> (shell {:out :string
+                           :continue true} "git describe")
                    :out
                    str/trim
                    (re-matches (re-pattern "^v\\d+\\.\\d+\\.\\d+$")))
