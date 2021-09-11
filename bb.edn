@@ -64,7 +64,7 @@
    :task    (shell "./native-test")}
 
   tag (do
-        (shell (str "git commit -m " (str "v"(deref bs/version))))
+        (shell (str "git commit --allow-empty -m " (str "v"(deref bs/version))))
         (shell (str "git tag v" (deref bs/version)))
         (shell "git push --atomic origin main"
                (str "v" (deref bs/version))))
