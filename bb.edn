@@ -65,7 +65,8 @@
    :depends [native-image]
    :task    (shell "./native-test")}
 
-  bump-version (load-file "scripts/bump_version.clj")
+  bump-version (do (load-file "scripts/bump_version.clj")
+                   (shell "git add resources/clj-easy/graal-build-time-version.txt"))
 
   tag (do
         (shell (str "git tag v" bs/version))
