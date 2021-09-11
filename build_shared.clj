@@ -23,8 +23,8 @@
   (fs/delete-tree "target"))
 
 (defn needs-compile? []
-  true #_(seq (fs/modified-since target sources)))
+  (seq (fs/modified-since target sources)))
 
 (defn needs-jar? []
-  true #_(or (seq (fs/modified-since target @jar-file))
+  (or (seq (fs/modified-since target @jar-file))
       (needs-compile?)))

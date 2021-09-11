@@ -1,13 +1,18 @@
 {:paths ["."]
  :tasks
  {:requires ([babashka.fs :as fs]
+             [babashka.tasks :as tasks]
+             [babashka.process :refer [tokenize]]
              [build-shared :as bs]
              [clojure.string :as str])
   :init
   (do
     (def windows? (str/starts-with? (System/getProperty "os.name")
                                     "Windows"))
-    (defn clojure [& args] (shell (str/join " " (cons "clojure -J-Dclojure.main.report=stderr" args)))))
+    (defn clojure
+      "Clojure defaulting to stderr output"
+      [arg & args]
+      (apply tasks/clojure (str "-J-Dclojure.main.report=stderr " arg) args)))
 
   clean {:doc "Clean target dir"
          :task (bs/clean {})}
@@ -41,23 +46,22 @@
    :depends [graalvm uber]
    :task    (when (seq (fs/modified-since "native-test"
                                           bs/uberjar))
-              (do
-                (shell (str (fs/file graalvm
-                                     "bin"
-                                     (if windows?
-                                       "gu.cmd"
-                                       "gu")))
-                       "install" "native-image")
-                (shell (str (fs/file graalvm
-                                     "bin"
-                                     (if windows?
-                                       "native-image.cmd"
-                                       "native-image")))
-                       ;; note: we are omitting --initialize-at-build-time
-                       "-jar" "target/test.jar"
-                       "--no-fallback"
-                       "--no-server"
-                       "-H:Name=native-test")))}
+              (shell (str (fs/file graalvm
+                                   "bin"
+                                   (if windows?
+                                     "gu.cmd"
+                                     "gu")))
+                     "install" "native-image")
+              (shell (str (fs/file graalvm
+                                   "bin"
+                                   (if windows?
+                                     "native-image.cmd"
+                                     "native-image")))
+                     ;; note: we are omitting --initialize-at-build-time
+                     "-jar" "target/test.jar"
+                     "--no-fallback"
+                     "--no-server"
+                     "-H:Name=native-test"))}
 
   native-image-test
   {:doc "Run integration test"
