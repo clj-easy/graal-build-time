@@ -19,7 +19,7 @@
   (if (bs/needs-compile?)
     (do
       (prn "basis:")
-      (prn basis)
+      (prn (keys (:classpath basis)))
       (b/compile-clj {:basis basis
                       :src-dirs bs/sources
                       :class-dir class-dir})
