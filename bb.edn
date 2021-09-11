@@ -11,9 +11,9 @@
   clean {:doc "Clean target dir"
          :task (bs/clean {})}
 
-  compile-clojure {:doc "Compile clojure sources"
+  compile-sources {:doc "Compile sources"
                    :task (when (bs/needs-compile?)
-                           (clojure "-T:build compile-clojure"))}
+                           (clojure "-T:build compile-sources"))}
 
   jar {:doc "Build jar"
        :task (when (bs/needs-jar?)
