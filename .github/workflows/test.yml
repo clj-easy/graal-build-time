@@ -21,10 +21,11 @@ jobs:
           graalvm: "21.2.0"
           java: java11
 
-      - name: Setup Babashka
-        uses: turtlequeue/setup-babashka@v1.3.0
-        with:
-          babashka-version: 0.6.0
+      - name: Install bb
+        run: |
+          curl -sLO https://raw.githubusercontent.com/babashka/babashka/master/install
+          chmod +x install
+          ./install --version 0.6.0 --static --dir /usr/local/bin
 
       - name: Run native tests
         run: bb native-image-test
