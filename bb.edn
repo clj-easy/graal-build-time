@@ -65,6 +65,8 @@
    :depends [native-image]
    :task    (shell "./native-test")}
 
+  bump-version (load-file "scripts/bump_version.clj")
+
   tag (do
         (shell (str "git tag v" bs/version))
         (shell "git push --atomic origin main"
