@@ -1,10 +1,7 @@
 name: Test and Deploy
 
 on:
-  create:
-    tags:
-      - 'v*'
-  push:
+  - push
 
 jobs:
   test:
