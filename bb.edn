@@ -60,7 +60,9 @@
    :depends [native-image]
    :task    (shell "./native-test")}
 
-  tag (shell (str "git tag v" (deref bs/version)))
+  tag (do (shell (str "git tag v" (deref bs/version)))
+          (shell "git push --atomic origin main"
+                 (str "v" (deref bs/version))))
 
   ,}
 ,}
