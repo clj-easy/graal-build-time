@@ -58,4 +58,9 @@
   native-image-test
   {:doc "Run integration test"
    :depends [native-image]
-   :task    (shell "./native-test")}}}
+   :task    (shell "./native-test")}
+
+  tag (shell (str "git tag v" (deref bs/version)))
+
+  ,}
+,}
