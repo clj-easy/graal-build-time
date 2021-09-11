@@ -66,9 +66,9 @@
    :task    (shell "./native-test")}
 
   tag (do
-        (shell (str "git tag v" (deref bs/version)))
+        (shell (str "git tag v" bs/version))
         (shell "git push --atomic origin main"
-               (str "v" (deref bs/version))))
+               (str "v" bs/version)))
 
   current-tag (->> (shell {:out :string
                            :continue true} "git describe")
@@ -88,12 +88,10 @@
           :task (when should-release
                   (clojure "-T:build deploy"))}
 
-  lein:version (-> (slurp "resources/clj-easy/graal-build-time-version.txt")
-                   str/trim)
   lein:bump-version {:depends [lein:version]
                      :task (spit "project.clj"
                                  (-> (slurp "project.clj.template")
-                                     (str/replace "{{version}}" (pr-str lein:version))))}
+                                     (str/replace "{{version}}" (pr-str bs/version))))}
 
   ,}
  ,}
