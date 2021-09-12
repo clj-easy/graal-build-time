@@ -23,8 +23,13 @@ This library inspects the classpath during a native image build. All classes
 that end with `__init.class` are assumed to be created by Clojure. The package
 of that class is then added to the results.
 
+## Overriding classes
+
 If there are classes in packages that you would like to override, you can still
-use the `--initialize-at-run-time=my.org.MyClass.class` argument in your build.
+use the `--initialize-at-run-time=my.org.MyClass` argument in your
+build. E.g. when using http-kit, the `org.httpkit` package is included for
+build-time initialization, but you will still need to override one class:
+`--initialize-at-run-time=org.httpkit.client.ClientSslEngineFactory$SSLHolder`.
 
 ## Single segment namespaces
 
