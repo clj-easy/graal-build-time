@@ -95,10 +95,5 @@
                    {:continue true}
                    "-J-Dclojure.main.report=stderr -T:build deploy"))}
 
-  lein:bump-version {:depends [lein:version]
-                     :task (spit "project.clj"
-                                 (-> (slurp "project.clj.template")
-                                     (str/replace "{{version}}" (pr-str bs/version))))}
-
   ,}
  ,}
