@@ -69,10 +69,11 @@
                    (shell "git add resources/clj-easy/graal-build-time-version.txt")
                    (shell "git commit -m 'Bump version'"))
 
-  tag (do
-        (shell (str "git tag v" bs/version))
-        (shell "git push --atomic origin main"
-               (str "v" bs/version)))
+  tag (shell (str "git tag v" bs/version))
+
+  publish {:depends [bump-version tag]
+           :task (shell "git push --atomic origin main"
+                        (str "v" bs/version))}
 
   current-branch (->> (shell {:out :string} "git rev-parse --abbrev-ref HEAD")
                       :out
