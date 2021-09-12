@@ -35,6 +35,9 @@ jobs:
           key: ${{ runner.os }}-graal-build-time-${{ hashFiles('deps.edn') }}
           restore-keys: "$graal-build-time-"
 
+      - name: Setup build tools
+        uses: ilammy/msvc-dev-cmd@v1
+
       - name: Run native tests
         run: bb native-image-test
 
