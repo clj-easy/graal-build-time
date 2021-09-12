@@ -5,7 +5,7 @@
             [clojure.test :refer [deftest is testing]]))
 
 (deftest package-list-test
-  (-> (p/process ["bb" "uber"] {:inherit true})
+  #_#_#_(-> (p/process ["bb" "uber"] {:inherit true})
       (p/check))
   (testing "packages from directory"
     (is (= "clojure, clj_easy"
