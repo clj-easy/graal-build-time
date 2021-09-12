@@ -72,9 +72,11 @@
 
   tag (shell (str "git tag v" bs/version))
 
-  publish {:depends [bump-version tag]
-           :task (shell "git push --atomic origin main"
-                        (str "v" bs/version))}
+  publish {:task (do
+                   (run 'bump-version)
+                   (run 'tag)
+                   (shell "git push --atomic origin main"
+                          (str "v" bs/version)))}
 
   current-branch (->> (shell {:out :string} "git rev-parse --abbrev-ref HEAD")
                       :out
