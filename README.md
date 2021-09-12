@@ -10,20 +10,31 @@ you want to initialize at build time separately, like
 (currently) need to be initialized at build time. This library automatically
 registers classes created by Clojure as such, so you don't have to.
 
-Run `bb tasks` for all relevant project tasks:
+## Usage
 
-```
-$ bb tasks
-The following tasks are available:
+Just include this library on your classpath in your native-image build, that's
+it. During the image build you will see a line of output like:
 
-clean             Clean target dir
-jar               Build jar
-install           Install jar in local maven repo
-uber              Build uberjar for testing.
-graalvm           Checks GRAALVM_HOME env var
-native-image      Builds native image
-native-image-test Run integration test
-```
+    Registering packages for build time initialization: clojure, clj_easy
+
+## How does it work
+
+This library inspects the classpath during a native image build. All classes
+that end with `__init.class` are assumed to be created by Clojure. The package
+of that class is then added to the results.
+
+If there are classes in packages that you would like to override, you can still
+use the `--initialize-at-run-time=my.org.MyClass.class` argument in your build.
+
+## Single segment namespaces
+
+This library doesn't work with single segmenet namespaces like `digest` in a
+file like `src/digest.clj`. We recommend not using single segment namespaces in
+libraries.
+
+## Develop
+
+Run `bb tasks` for all relevant project tasks.
 
 Running `native-image-test` will:
 
@@ -51,4 +62,4 @@ Running `native-image-test` will:
 
 Licensed under the MIT license, see LICENSE.
 
-Copyright © 2021 Michiel Borkent, Eric Dallo and contributors.
+Copyright © 2021 Michiel Borkent, Eric Dallo, Rahul Dé and contributors.
