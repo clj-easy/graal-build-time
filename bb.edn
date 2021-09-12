@@ -67,7 +67,8 @@
 
   bump-version (do (load-file "scripts/bump_version.clj")
                    (shell "git add resources/clj-easy/graal-build-time-version.txt")
-                   (shell "git commit -m 'Bump version'"))
+                   (shell "git commit -m 'Bump version'")
+                   (bs/refresh-version))
 
   tag (shell (str "git tag v" bs/version))
 
