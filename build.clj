@@ -64,7 +64,7 @@
 
 (def uber-basis
   (b/create-basis {:project "deps.edn"
-                   :aliases [:test]}))
+                   :aliases [:uber]}))
 
 (defn uber [_]
   (println "Building test uberjar.")

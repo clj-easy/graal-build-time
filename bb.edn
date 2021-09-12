@@ -32,6 +32,9 @@
         :task (when (seq (fs/modified-since bs/uberjar ["deps.edn" "src" "test"]))
                 (clojure "-T:build uber"))}
 
+  test {:doc "Runs tests"
+        :task (clojure "-X:test")}
+
   graalvm {:doc "Checks GRAALVM_HOME env var"
            :task
            (let [env (System/getenv "GRAALVM_HOME")]

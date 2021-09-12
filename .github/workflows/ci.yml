@@ -38,6 +38,9 @@ jobs:
       - name: Setup build tools
         uses: ilammy/msvc-dev-cmd@v1
 
+      - name: Run tests
+        run: bb test
+
       - name: Run native tests
         run: bb native-image-test
 

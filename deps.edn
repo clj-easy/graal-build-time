@@ -9,4 +9,9 @@
                  babashka/process {:mvn/version "0.0.2"}
                  io.github.slipset/deps-deploy {:sha "b4359c5d67ca002d9ed0c4b41b710d7e5a82e3bf"}}
           :ns-default build}
-  :test {:extra-paths ["test"]}}}
+  :uber {:extra-paths ["test"]}
+  :test {:extra-paths ["test"]
+         :extra-deps {io.github.cognitect-labs/test-runner
+                      {:git/tag "v0.5.0" :git/sha "b3fd0d2"}
+                      babashka/process {:mvn/version "0.0.2"}}
+         :exec-fn cognitect.test-runner.api/test}}}

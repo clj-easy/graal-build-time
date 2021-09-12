@@ -25,6 +25,11 @@
               (str/starts-with? package %))
         packages))
 
+(defn unique-packages [packages]
+  (->> packages
+       (remove (partial contains-parent? packages))
+       set))
+
 (defn packages-from-jar
   [^Path jar-file]
   (with-open [jar (JarFile. (.toFile jar-file))]
@@ -35,10 +40,8 @@
                         ;; always split jar entries on "/"
                         (map #(entry->package % "/"))
                         (remove str/blank?))
-          unique-packages (->> packages
-                               (remove (partial contains-parent? packages))
-                               set)]
-      unique-packages)))
+          unique (unique-packages packages)]
+      unique)))
 
 (defn packages-from-dir [^Path dir]
   ;; TODO: this needs unit tests as it's not exercises in integration test
@@ -52,8 +55,9 @@
         packages (->> names
                       (filter consider-jar-file-entry?)
                       ;; split file-names on OS-specific file.separator
-                      (map #(entry->package % (System/getProperty "file.separator"))))]
-    packages))
+                      (map #(entry->package % (System/getProperty "file.separator"))))
+        unique (unique-packages packages)]
+    unique))
 
 (defn -packageList [paths]
   (into-array (distinct
