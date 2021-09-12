@@ -1,0 +1,35 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - "!*"
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Babashka
+        uses: turtlequeue/setup-babashka@v1.3.0
+        with:
+          babashka-version: 0.6.0
+
+      - name: Apply Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+          key: ${{ runner.os }}-graal-build-time-${{ hashFiles('deps.edn') }}
+          restore-keys: "$graal-build-time-"
+
+      - name: Deploy to clojars
+        env:
+          CLOJARS_USERNAME: borkdude
+          CLOJARS_PASSWORD: ${{ secrets.CLOJARS_ORG_TOKEN }}
+        run: bb deploy
