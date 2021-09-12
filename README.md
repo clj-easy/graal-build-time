@@ -33,7 +33,7 @@ build-time initialization, but you will still need to override one class:
 
 ## Single segment namespaces
 
-This library doesn't work with single segmenet namespaces like `digest` in a
+This library doesn't work with single segment namespaces like `digest` in a
 file like `src/digest.clj`. We recommend not using single segment namespaces in
 libraries.
 
