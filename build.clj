@@ -8,7 +8,7 @@
    [clojure.tools.build.api :as b]
    [deps-deploy.deps-deploy :as dd]))
 
-(def class-dir "target/classes")
+(def class-dir bs/class-dir)
 (def basis (b/create-basis {:project "deps.edn"}))
 (def with-svm-basis (b/create-basis {:project "deps.edn"
                                      :aliases [:svm]}))
@@ -39,12 +39,12 @@
 (defn jar [_]
   (if (bs/needs-jar?)
     (do (println "Producing jar:" jar-file)
+        (compile-sources {})
         (b/write-pom {:class-dir class-dir
                       :lib lib
                       :version version
                       :basis basis
                       :src-dirs ["src"]})
-        (compile-sources {})
         (b/copy-dir {:src-dirs ["src" "resources"]
                      :target-dir class-dir})
         (b/jar {:class-dir class-dir

@@ -9,12 +9,13 @@
 (def jar-file (format "target/%s-%s.jar" (name lib) version))
 (def uberjar "target/test.jar")
 (def sources ["src"])
+(def class-dir "target/classes")
 
 (defn clean [_]
   (fs/delete-tree "target"))
 
 (defn needs-compile? []
-  (seq (fs/modified-since target sources)))
+  (seq (fs/modified-since class-dir sources)))
 
 (defn needs-jar? []
   (or (seq (fs/modified-since target [version-file]))
