@@ -6,10 +6,10 @@
    :methods [^{:static true} [packageList [java.util.List] "[Ljava.lang.String;"]
              ^{:static true} [packageListStr ["[Ljava.lang.String;"] String]]))
 
-(def file-sep-pattern (re-pattern (str/re-quote-replacement (System/getProperty "file.separator"))))
+(def file-sep-pattern )
 
-(defn entry->package [nm]
-  (let [package (->> (str/split nm file-sep-pattern)
+(defn entry->package [nm split]
+  (let [package (->> (str/split nm (re-pattern (str/re-quote-replacement split)))
                      drop-last
                      (str/join "."))]
     (when (str/blank? package)
@@ -32,7 +32,8 @@
           packages (->> entries
                         (map #(.getName ^JarFile$JarFileEntry %))
                         (filter consider-jar-file-entry?)
-                        (map entry->package)
+                        ;; always split jar entries on "/"
+                        (map #(entry->package % "/"))
                         (remove str/blank?))
           unique-packages (->> packages
                                (remove (partial contains-parent? packages))
@@ -50,7 +51,8 @@
         names (map str relatives)
         packages (->> names
                       (filter consider-jar-file-entry?)
-                      (map entry->package))]
+                      ;; split file-names on OS-specific file.separator
+                      (map #(entry->package % (System/getProperty "file.separator"))))]
     packages))
 
 (defn -packageList [paths]
