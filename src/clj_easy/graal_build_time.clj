@@ -6,8 +6,6 @@
    :methods [^{:static true} [packageList [java.util.List] "[Ljava.lang.String;"]
              ^{:static true} [packageListStr ["[Ljava.lang.String;"] String]]))
 
-(def file-sep-pattern )
-
 (defn entry->package [nm split]
   (let [package (->> (str/split nm (re-pattern (str/re-quote-replacement split)))
                      drop-last
