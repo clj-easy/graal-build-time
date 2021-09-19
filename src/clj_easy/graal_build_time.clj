@@ -54,7 +54,8 @@
         names (map str relatives)
         packages (->> names
                       (filter #(consider-entry? % (System/getProperty "file.separator")))
-                      (map #(entry->package % (System/getProperty "file.separator"))))
+                      (map #(entry->package % (System/getProperty "file.separator")))
+                      (remove str/blank?))
         unique (unique-packages packages)]
     unique))
 
