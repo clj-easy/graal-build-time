@@ -44,7 +44,7 @@
 (defn packages-from-dir [^Path dir]
   ;; TODO: this needs unit tests as it's not exercises in integration test
   (let [f (.toFile dir)
-        files (file-seq f)
+        files (rest (file-seq f))
         relatives (map (fn [^java.io.File f]
                          (let [path (.toPath f)]
                            (.relativize dir path)))
