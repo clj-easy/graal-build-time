@@ -22,7 +22,7 @@
 
 (defn ^:private contains-parent? [packages package]
   (some #(and (not= % package)
-              (str/starts-with? package %))
+              (str/starts-with? (str package ".")  (str % ".")))
         packages))
 
 (defn unique-packages [packages]
