@@ -1,6 +1,7 @@
 /target
 /.cpcache
 /native-test
+/native-test.exe
 /native-test.build_artifacts.txt
 /test.build_artifacts.txt
 .clj-kondo/.cache
