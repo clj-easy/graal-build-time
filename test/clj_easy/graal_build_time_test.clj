@@ -7,11 +7,12 @@
 (deftest package-list-test
   (-> (p/process ["bb" "uber"] {:inherit true})
       (p/check))
-  (testing "packages from directory"
-    (is (= "clojure, clj_easy"
-           (-> (bt/-packageList [(.toPath (io/file "target/classes"))])
-               (bt/-packageListStr)))))
-  (testing "packages from jar"
-    (is (= "clojure, clj_easy"
-           (-> (bt/-packageList [(.toPath (io/file "target/test.jar"))])
-               (bt/-packageListStr))))))
+  (let [expected "clojure, graal_build_time_test, graal_build_time_test_app, clj_easy"]
+    (testing "packages from directory"
+      (is (= expected
+             (-> (bt/-packageList [(.toPath (io/file "target/classes"))])
+                 (bt/-packageListStr)))))
+    (testing "packages from jar"
+      (is (= expected
+             (-> (bt/-packageList [(.toPath (io/file "target/test.jar"))])
+                 (bt/-packageListStr)))))))

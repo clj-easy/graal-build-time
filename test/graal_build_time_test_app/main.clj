@@ -1,6 +1,5 @@
-(ns clj-easy.graal-build-time.main
+(ns graal-build-time-test-app.main
   (:gen-class))
 
 (defn -main []
   (println "Hello world"))
-

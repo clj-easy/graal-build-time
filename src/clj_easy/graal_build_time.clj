@@ -43,8 +43,6 @@
       unique)))
 
 (defn packages-from-dir [^Path dir]
-  ;; TODO: this needs unit tests as it's not exercises in integration test
-  (println "-packages-from-dir" dir)
   (let [f (.toFile dir)
         files (rest (file-seq f))
         relatives (map (fn [^java.io.File f]
