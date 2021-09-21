@@ -2,17 +2,36 @@
  :tasks
  {:requires ([babashka.fs :as fs]
              [babashka.tasks :as tasks]
+             [babashka.deps :as deps]
              [babashka.process :refer [tokenize]]
              [build-shared :as bs]
+             [clojure.edn :as edn]
+             [clojure.java.io :as io]
              [clojure.string :as str])
   :init
   (do
     (def windows? (str/starts-with? (System/getProperty "os.name")
                                     "Windows"))
+
     (defn clojure
       "Clojure defaulting to stderr output"
       [arg & args]
       (apply tasks/clojure (str "-J-Dclojure.main.report=stderr " arg) args)))
+
+  repl (let [proc (deps/clojure (tokenize "-T:build prepl")
+                                {:in nil
+                                 :err :inherit
+                                 :out nil})]
+         {:in (io/writer (:in proc))
+          :out (io/reader (:out proc))})
+
+  expr {:depends [repl]
+        :task
+        (do (binding [*out* (:in repl)]
+              (println "(do (in-ns 'build) (uber nil))"))
+            (binding [*in* (:out repl)]
+              (let [res (edn/read-string (read-line))]
+                (println (:form res) '-> (:val res)))))}
 
   clean {:doc "Clean target dir"
          :task (bs/clean {})}

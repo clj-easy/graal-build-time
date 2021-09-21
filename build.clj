@@ -5,6 +5,7 @@
   (:refer-clojure :exclude [compile])
   (:require
    [build-shared :as bs :refer [lib]]
+   [clojure.core.server :as server]
    [clojure.tools.build.api :as b]
    [deps-deploy.deps-deploy :as dd]))
 
@@ -89,3 +90,6 @@
                      :pom-file (b/pom-path {:lib lib :class-dir class-dir})}
                     opts))
   opts)
+
+(defn prepl [_]
+  (clojure.core.server/io-prepl))
