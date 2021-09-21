@@ -67,4 +67,4 @@ Running `native-image-test` will:
 
 Licensed under the MIT license, see LICENSE.
 
-Copyright © 2021 Michiel Borkent, Eric Dallo, Rahul Dé and contributors.
+Copyright © 2021 Michiel Borkent, Eric Dallo, Rahul Dé, Lee Read and contributors.
