@@ -7,11 +7,19 @@
 (deftest package-list-test
   (-> (p/process ["bb" "uber"] {:inherit true})
       (p/check))
-  (testing "packages from directory"
-    (is (= "clojure, clj_easy"
-           (-> (bt/-packageList [(.toPath (io/file "target/classes"))])
-               (bt/-packageListStr)))))
-  (testing "packages from jar"
-    (is (= "clojure, clj_easy"
-           (-> (bt/-packageList [(.toPath (io/file "target/test.jar"))])
-               (bt/-packageListStr))))))
+  (let [expected-packages "clojure, graal_build_time_test, graal_build_time_test_app, clj_easy"
+        expected-warning #"WARN: Single segment .* single_segment_example__init.class"]
+    (testing "packages from directory"
+      (is (re-find
+            expected-warning
+            (with-out-str
+              (is (= expected-packages
+                     (-> (bt/-packageList [(.toPath (io/file "target/classes"))])
+                         (bt/-packageListStr))))))))
+    (testing "packages from jar"
+      (is (re-find
+            expected-warning
+            (with-out-str
+              (is (= expected-packages
+                     (-> (bt/-packageList [(.toPath (io/file "target/test.jar"))])
+                         (bt/-packageListStr))))))))))

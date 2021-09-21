@@ -13,7 +13,7 @@
                      drop-last
                      (str/join "."))]
     (when (str/blank? package)
-      (println "WARN: Single segment package found for class:" nm ".This class has no package and it will not be added to the result packages."))
+      (println (str "WARN: Single segment package found for class: " nm ". This class has no package and it will not be added to the result packages.")))
     package))
 
 (defn ^:private consider-entry? [nm file-sep]
@@ -22,7 +22,7 @@
 
 (defn ^:private contains-parent? [packages package]
   (some #(and (not= % package)
-              (str/starts-with? package %))
+              (str/starts-with? (str package ".")  (str % ".")))
         packages))
 
 (defn unique-packages [packages]
@@ -43,8 +43,6 @@
       unique)))
 
 (defn packages-from-dir [^Path dir]
-  ;; TODO: this needs unit tests as it's not exercises in integration test
-  (println "-packages-from-dir" dir)
   (let [f (.toFile dir)
         files (rest (file-seq f))
         relatives (map (fn [^java.io.File f]

@@ -73,12 +73,13 @@
   (b/compile-clj {:basis uber-basis
                   :src-dirs ["test"]
                   :class-dir class-dir
-                  :ns-compile '[clj-easy.graal-build-time.main]})
+                  :ns-compile '[graal-build-time-test-app.main
+                                graal-build-time-test.core]})
   (println "Building uberjar.")
   (b/uber {:class-dir class-dir
            :uber-file "target/test.jar"
            :basis uber-basis
-           :main 'clj-easy.graal-build-time.main}))
+           :main 'graal-build-time-test-app.main}))
 
 (defn deploy [opts]
   (println "All set for deployment 🚀🚀")
