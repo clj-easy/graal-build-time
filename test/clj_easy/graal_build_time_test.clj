@@ -14,7 +14,7 @@
             expected-warning
             (with-out-str
               (is (= expected-packages
-                     (-> (bt/-packageList [(.toPath (io/file "target/classes"))])
+                     (-> (bt/-packageList [(.toPath (io/file "target/uber-classes"))])
                          (bt/-packageListStr))))))))
     (testing "packages from jar"
       (is (re-find

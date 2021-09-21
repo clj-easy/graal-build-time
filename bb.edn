@@ -5,6 +5,7 @@
              [babashka.process :refer [tokenize]]
              [build-shared :as bs]
              [clojure.string :as str])
+  :enter (println (format "-[%s]----" (:name (current-task))))
   :init
   (do
     (def windows? (str/starts-with? (System/getProperty "os.name")
@@ -18,19 +19,31 @@
          :task (bs/clean {})}
 
   compile-sources {:doc "Compile sources"
-                   :task (when (bs/needs-compile?)
-                           (clojure "-T:build compile-sources"))}
+                   :task (if (seq (fs/modified-since bs/class-dir ["deps.edn" "src"]))
+                           (clojure "-T:build compile-sources")
+                           (println "Sources already compiled to" bs/class-dir))}
 
   jar {:doc "Build jar"
-       :task (when (bs/needs-jar?)
-               (clojure "-T:build jar"))}
+       :depends [compile-sources]
+       :task (if (seq (fs/modified-since bs/jar-file [bs/class-dir]))
+               (clojure "-T:build jar")
+               (println "Jar is already up to date" bs/jar-file))}
 
   install {:doc "Install jar in local maven repo"
+           :depends [jar]
            :task (clojure "-T:build install")}
 
+  compile-uber-sources
+  {:doc "Compile sources for test uberjar"
+   :task (if (seq (fs/modified-since bs/uber-class-dir ["deps.edn" "src" "test"]))
+           (clojure "-T:build compile-uber-sources")
+           (println "Uber sources already compiled to" bs/uber-class-dir))}
+
   uber {:doc "Build uberjar for testing"
-        :task (when (seq (fs/modified-since bs/uberjar ["deps.edn" "src" "test"]))
-                (clojure "-T:build uber"))}
+        :depends [compile-uber-sources]
+        :task (if (seq (fs/modified-since bs/uberjar bs/uber-class-dir))
+                (clojure "-T:build uber")
+                (println "Uberjar is already up to date" bs/uberjar))}
 
   test {:doc "Runs tests"
         :task (clojure "-X:test")}
@@ -83,19 +96,20 @@
                    (shell "git push --atomic origin main"
                           (str "v" bs/version)))}
 
-  current-branch (->> (shell {:out :string} "git rev-parse --abbrev-ref HEAD")
+  -current-branch (->> (shell {:out :string} "git rev-parse --abbrev-ref HEAD")
                       :out
                       str/trim)
 
-  can-release {:depends [current-branch]
-               :task (= "main" current-branch)}
+  -can-release {:depends [-current-branch]
+               :task (= "main" -current-branch)}
 
   deploy {:doc "Deploys to clojars"
-          :depends [can-release]
-          :task (when can-release
-                  (tasks/clojure
-                   {:continue true}
-                   "-J-Dclojure.main.report=stderr -T:build deploy"))}
-
-  ,}
- ,}
+          :depends [-can-release]
+          :task (if -can-release
+                  (do
+                    (run 'jar)
+                    (println "All set for deployment 🚀🚀")
+                    (tasks/clojure
+                     {:continue true}
+                     "-J-Dclojure.main.report=stderr -T:build deploy"))
+                  (println "Conditions for release did not pass, not deploying."))}}}
