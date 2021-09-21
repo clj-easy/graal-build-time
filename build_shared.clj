@@ -17,10 +17,3 @@
 
 (defn clean [_]
   (fs/delete-tree "target"))
-
-(defn needs-compile? []
-  (seq (fs/modified-since class-dir sources)))
-
-(defn needs-jar? []
-  (or (seq (fs/modified-since target [version-file]))
-      (needs-compile?)))

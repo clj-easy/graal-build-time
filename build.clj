@@ -19,42 +19,34 @@
   (bs/clean {}))
 
 (defn compile-sources [_]
-  (println "Compiling sources")
-  (if (bs/needs-compile?)
-    (do
-      (println "Compiling Clojure sources.")
-      (b/compile-clj {:basis basis
-                      :src-dirs bs/sources
-                      :class-dir class-dir
-                      :ns-compile '[clj-easy.graal-build-time]})
-      (println "Done compiling Clojure sources.")
-      (println "Compiling java sources.")
-      (b/javac {:src-dirs bs/sources
-                :class-dir class-dir
-                :basis with-svm-basis
-                :javac-opts ["-source" "8" "-target" "8"]})
-      (println "Done compiling java sources."))
-    (println "All up to date, nothing to compile.")))
+  (println "Compiling Clojure sources.")
+  (b/compile-clj {:basis basis
+                  :src-dirs bs/sources
+                  :class-dir class-dir
+                  :ns-compile '[clj-easy.graal-build-time]})
+  (println "Done compiling Clojure sources.")
+  (println "Compiling java sources.")
+  (b/javac {:src-dirs bs/sources
+            :class-dir class-dir
+            :basis with-svm-basis
+            :javac-opts ["-source" "8" "-target" "8"]})
+  (println "Done compiling java sources."))
 
 (defn jar [_]
-  (if (bs/needs-jar?)
-    (do (println "Producing jar:" jar-file)
-        (compile-sources {})
-        (b/write-pom {:class-dir class-dir
-                      :lib lib
-                      :version version
-                      :basis basis
-                      :src-dirs ["src"]})
-        (b/copy-dir {:src-dirs ["src" "resources"]
-                     :target-dir class-dir})
-        (b/jar {:class-dir class-dir
-                :jar-file jar-file})
-        (println "Done building jar."))
-    (println "Jar is up to date.")))
+  (println "Producing jar:" jar-file)
+  (b/write-pom {:class-dir class-dir
+                :lib lib
+                :version version
+                :basis basis
+                :src-dirs ["src"]})
+  (b/copy-dir {:src-dirs ["src" "resources"]
+               :target-dir class-dir})
+  (b/jar {:class-dir class-dir
+          :jar-file jar-file})
+  (println "Done building jar."))
 
 (defn install
   [_]
-  (jar {})
   (b/install {:basis basis
               :lib lib
               :version version
@@ -82,8 +74,6 @@
            :main 'graal-build-time-test-app.main}))
 
 (defn deploy [opts]
-  (println "All set for deployment 🚀🚀")
-  (jar {})
   (println "Deploying version" jar-file "to Clojars.")
   (dd/deploy (merge {:installer :remote
                      :artifact jar-file

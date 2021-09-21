@@ -5,6 +5,7 @@
              [babashka.process :refer [tokenize]]
              [build-shared :as bs]
              [clojure.string :as str])
+  :enter (println (format "-[%s]----" (:name (current-task))))
   :init
   (do
     (def windows? (str/starts-with? (System/getProperty "os.name")
@@ -18,14 +19,18 @@
          :task (bs/clean {})}
 
   compile-sources {:doc "Compile sources"
-                   :task (when (bs/needs-compile?)
-                           (clojure "-T:build compile-sources"))}
+                   :task (if (seq (fs/modified-since bs/class-dir bs/sources))
+                           (clojure "-T:build compile-sources")
+                           (println "Sources already compiled."))}
 
   jar {:doc "Build jar"
-       :task (when (bs/needs-jar?)
-               (clojure "-T:build jar"))}
+       :depends [compile-sources]
+       :task (if (seq (fs/modified-since bs/jar-file [bs/class-dir]))
+               (clojure "-T:build jar")
+               (println "Jar is already up to date."))}
 
   install {:doc "Install jar in local maven repo"
+           :depends [jar]
            :task (clojure "-T:build install")}
 
   uber {:doc "Build uberjar for testing"
@@ -83,19 +88,20 @@
                    (shell "git push --atomic origin main"
                           (str "v" bs/version)))}
 
-  current-branch (->> (shell {:out :string} "git rev-parse --abbrev-ref HEAD")
+  -current-branch (->> (shell {:out :string} "git rev-parse --abbrev-ref HEAD")
                       :out
                       str/trim)
 
-  can-release {:depends [current-branch]
-               :task (= "main" current-branch)}
+  -can-release {:depends [-current-branch]
+               :task (= "main" -current-branch)}
 
   deploy {:doc "Deploys to clojars"
-          :depends [can-release]
-          :task (when can-release
-                  (tasks/clojure
-                   {:continue true}
-                   "-J-Dclojure.main.report=stderr -T:build deploy"))}
-
-  ,}
- ,}
+          :depends [-can-release]
+          :task (if -can-release
+                  (do
+                    (run 'jar)
+                    (println "All set for deployment 🚀🚀")
+                    (tasks/clojure
+                     {:continue true}
+                     "-J-Dclojure.main.report=stderr -T:build deploy"))
+                  (println "Conditions for release did not pass, not deploying."))}}}
