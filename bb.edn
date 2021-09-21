@@ -16,22 +16,34 @@
     (defn clojure
       "Clojure defaulting to stderr output"
       [arg & args]
-      (apply tasks/clojure (str "-J-Dclojure.main.report=stderr " arg) args)))
+      (apply tasks/clojure (str "-J-Dclojure.main.report=stderr " arg) args))
 
-  repl (let [proc (deps/clojure (tokenize "-T:build prepl")
-                                {:in nil
-                                 :err :inherit
-                                 :out nil})]
-         {:in (io/writer (:in proc))
-          :out (io/reader (:out proc))})
+    (def prepl (delay (do
+                        (println "Launching prepl!")
+                        (let [proc (deps/clojure (tokenize "-T:build prepl")
+                                                 {:in nil
+                                                  :err :inherit
+                                                  :out nil})]
+                          {:in (io/writer (:in proc))
+                           :out (io/reader (:out proc))}))))
+    (defn run-expr [form]
+      (let [form (format "(do (in-ns 'build) %s)" (pr-str form))]
+            (do (binding [*out* (:in (deref prepl))]
+                  (println form))
+                (binding [*in* (:out (deref prepl))]
+                  (loop []
+                    (let [res (edn/read-string (read-line))]
+                      (when-let [v (:val res)]
+                        (when (not= "nil" v)
+                          (print v)))
+                      (if (not= form (:form res))
+                        (recur)
+                        (flush)))))))))
 
-  expr {:depends [repl]
-        :task
-        (do (binding [*out* (:in repl)]
-              (println "(do (in-ns 'build) (uber nil))"))
-            (binding [*in* (:out repl)]
-              (let [res (edn/read-string (read-line))]
-                (println (:form res) '-> (:val res)))))}
+  prepl:sum (run-expr '(prn (+ 1 2 3)))
+
+  prepl:uber {:depends [prepl:sum]
+              :task (run-expr '(uber nil))}
 
   clean {:doc "Clean target dir"
          :task (bs/clean {})}
