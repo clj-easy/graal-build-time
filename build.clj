@@ -18,8 +18,9 @@
 (defn clean [_]
   (bs/clean {}))
 
-(defn compile-sources [_]
-  (println "Compiling Clojure sources.")
+
+(defn compile-sources [{:keys [class-dir] :or {class-dir class-dir}}]
+  (println "Compiling Clojure sources to:" class-dir)
   (b/compile-clj {:basis basis
                   :src-dirs bs/sources
                   :class-dir class-dir
@@ -58,18 +59,21 @@
   (b/create-basis {:project "deps.edn"
                    :aliases [:uber]}))
 
-(defn uber [_]
-  (println "Building test uberjar.")
-  (compile-sources {})
-  (println "Compiling extra sources.")
+(defn compile-uber-sources [_]
+  (println "Compiling test uberjar sources.")
+  (compile-sources {:class-dir bs/uber-class-dir})
+  (println "Compiling test sources to" bs/uber-class-dir)
   (b/compile-clj {:basis uber-basis
                   :src-dirs ["test"]
-                  :class-dir class-dir
+                  :class-dir bs/uber-class-dir
                   :ns-compile '[graal-build-time-test-app.main
                                 graal-build-time-test.core]})
-  (println "Building uberjar.")
-  (b/uber {:class-dir class-dir
-           :uber-file "target/test.jar"
+  (println "Done compiling uberjar test sources."))
+
+(defn uber [_]
+  (println "Building test uberjar:" bs/uberjar)
+  (b/uber {:class-dir bs/uber-class-dir
+           :uber-file bs/uberjar
            :basis uber-basis
            :main 'graal-build-time-test-app.main}))
 

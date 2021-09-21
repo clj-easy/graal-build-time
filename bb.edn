@@ -19,23 +19,31 @@
          :task (bs/clean {})}
 
   compile-sources {:doc "Compile sources"
-                   :task (if (seq (fs/modified-since bs/class-dir bs/sources))
+                   :task (if (seq (fs/modified-since bs/class-dir ["deps.edn" "src"]))
                            (clojure "-T:build compile-sources")
-                           (println "Sources already compiled."))}
+                           (println "Sources already compiled to" bs/class-dir))}
 
   jar {:doc "Build jar"
        :depends [compile-sources]
        :task (if (seq (fs/modified-since bs/jar-file [bs/class-dir]))
                (clojure "-T:build jar")
-               (println "Jar is already up to date."))}
+               (println "Jar is already up to date" bs/jar-file))}
 
   install {:doc "Install jar in local maven repo"
            :depends [jar]
            :task (clojure "-T:build install")}
 
+  compile-uber-sources
+  {:doc "Compile sources for test uberjar"
+   :task (if (seq (fs/modified-since bs/uber-class-dir ["deps.edn" "src" "test"]))
+           (clojure "-T:build compile-uber-sources")
+           (println "Uber sources already compiled to" bs/uber-class-dir))}
+
   uber {:doc "Build uberjar for testing"
-        :task (when (seq (fs/modified-since bs/uberjar ["deps.edn" "src" "test"]))
-                (clojure "-T:build uber"))}
+        :depends [compile-uber-sources]
+        :task (if (seq (fs/modified-since bs/uberjar bs/uber-class-dir))
+                (clojure "-T:build uber")
+                (println "Uberjar is already up to date" bs/uberjar))}
 
   test {:doc "Runs tests"
         :task (clojure "-X:test")}

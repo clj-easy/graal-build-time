@@ -10,10 +10,11 @@
 
 (def target "target")
 (def lib 'com.github.clj-easy/graal-build-time)
-(def jar-file (format "target/%s-%s.jar" (name lib) version))
-(def uberjar "target/test.jar")
+(def jar-file (format "%s/%s-%s.jar" target (name lib) version))
+(def uberjar (str target "/test.jar"))
 (def sources ["src"])
-(def class-dir "target/classes")
+(def class-dir (str target "/classes"))
+(def uber-class-dir (str target "/uber-classes"))
 
 (defn clean [_]
-  (fs/delete-tree "target"))
+  (fs/delete-tree target))
