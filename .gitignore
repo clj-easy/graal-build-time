@@ -4,7 +4,8 @@
 /native-test.exe
 /native-test.build_artifacts.txt
 /test.build_artifacts.txt
-.clj-kondo/.cache
+/.clj-kondo/.cache
+/.clj-kondo/rewrite-clj
 .lsp
 !.lsp/config.edn
 .nrepl-port
