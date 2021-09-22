@@ -113,7 +113,7 @@
              -native-image-classes-fname
              -native-image-classes-target]
    :task (if (seq (fs/modified-since -native-image-classes-fname
-                                     bs/uberjar))
+                                     bs/uber-class-dir))
            (do
              (println "Building" -native-image-classes-fname)
              (shell -graalvm-native-image
