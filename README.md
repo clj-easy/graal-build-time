@@ -41,30 +41,30 @@ libraries.
 
 Run `bb tasks` for all relevant project tasks.
 
-Tasks attempt to avoid unnecessary work comparing source and target file dates.
+Tasks attempt to avoid unnecessary work by comparing source and target file dates.
 If you want to skip this optimization, run `bb clean` before running your task.
 
-Running `native-image-test` will:
-
-- Build this library
-- Produce an uberjar with a main which prints `"Hello world"`
-- Make a native image named `native-test` out of it. Notice in the output:
+Use `bb native-image-test` to run our integration tests.
+- This task builds native images for a hello world  app, and then runs them.
+- The hello world sources are compiled to Java classes and then jarred to an uberjar.
+- We use GraalVM's `native-image` with `graal-build-time` on the classpath to create 2 variants of the same app:
+  - one built from the uberjar
+  - the other built directly from the classes dir
+- Note that we omit `--initialize-at-build-time` when creating the native images.
+The the work that this deprecated option carried out is now taken care of by `graal-build-time`.
+- During native image creation, you'll see output that looks like this:
 
     ```
-    [native-test:73977]    classlist:   1,082.78 ms,  0.96 GB
-    [native-test:73977]        (cap):   1,431.59 ms,  0.96 GB
-    Registering packages for build time initialization: clojure, clj_easy
-    [native-test:73977]        setup:   2,882.60 ms,  0.96 GB
-    [native-test:73977]     (clinit):     183.20 ms,  1.74 GB
+    [target/native-test-classes:34725]    classlist:   1,627.53 ms,  0.96 GB
+    [target/native-test-classes:34725]        (cap):   1,892.39 ms,  0.96 GB
+    WARN: Single segment package found for class: single_segment_example__init.class. This class has no package and it will not be added to the result packages.
+    Registering packages for build time initialization: clojure, graal_build_time_test, graal_build_time_test_app, clj_easy
+    [target/native-test-classes:34725]        setup:   3,885.01 ms,  0.96 GB
+    [target/native-test-classes:34725]     (clinit):     219.91 ms,  1.74 GB
     ```
-
-    The `Registering packages for build time initialization` line is coming from
-    this library.  Note that the native image build omits
-    `--initialize-at-build-time`, that is taken care of by this library.
-
-- Run the binary `native-test` as a test. A zero exit code means that the native
-  image runs well (and hello world was printed as another way to convince
-  yourself).
+    The following lines are coming from graal-build-time:
+    - `Registering packages for build time initialization...` will always appear
+    - `WARN: Single segment package found...` will appear to warn you of the repercussions of a compiled Clojure single segment found in your build.
 
 # License
 
