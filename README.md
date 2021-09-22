@@ -41,7 +41,7 @@ libraries.
 
 Run `bb tasks` for all relevant project tasks.
 
-Tasks attempt to avoid unnecessary work comparing source and target file dates.
+Tasks attempt to avoid unnecessary work by comparing source and target file dates.
 If you want to skip this optimization, run `bb clean` before running your task.
 
 Running `native-image-test` will:
