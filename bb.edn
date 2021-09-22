@@ -69,31 +69,73 @@
                              "native-image.cmd"
                              "native-image"))))}
 
-  -native-image-target
-  {:task (str bs/target "/native-test")}
+  -native-image-uber-target
+  {:task (str bs/target "/hello-world-uber")}
 
-  -native-image-fname
-  {:depends [-native-image-target]
-   :task (str -native-image-target (when windows? ".exe"))}
+  -native-image-uber-fname
+  {:depends [-native-image-uber-target]
+   :task (str -native-image-uber-target (when windows? ".exe"))}
 
-  native-image
-  {:doc     "Builds native image"
-   :depends [-graalvm-native-image -native-image-fname -native-image-target uber]
-   :task (if (seq (fs/modified-since -native-image-fname
+  native-image-uber
+  {:doc     "Builds native image from uber"
+   :depends [uber
+             -graalvm-native-image
+             -native-image-uber-fname
+             -native-image-uber-target]
+   :task (if (seq (fs/modified-since -native-image-uber-fname
                                      bs/uberjar))
            (do
-             (println "Building" -native-image-fname)
+             (println "Building" -native-image-uber-fname)
              (shell -graalvm-native-image
-                     ;; note: we are omitting --initialize-at-build-time
-                    "-jar" "target/test.jar"
+                    ;; note: we are omitting --initialize-at-build-time
+                    "-jar" bs/uberjar
                     "--no-fallback"
-                    (str "-H:Name=" -native-image-target)))
-           (println "Image is already built" -native-image-fname))}
+                    (str "-H:Name=" -native-image-uber-target)))
+           (println "Image is already built" -native-image-uber-fname))}
+
+  native-image-uber-test
+  {:doc "Run native image built from uber"
+   :depends [native-image-uber -native-image-uber-fname]
+   :task (do (println "Running" -native-image-uber-fname)
+             (shell -native-image-uber-fname))}
+
+  -native-image-classes-target
+  {:task (str bs/target "/hello-world-classes")}
+
+  -native-image-classes-fname
+  {:depends [-native-image-classes-target]
+   :task (str -native-image-classes-target (when windows? ".exe"))}
+
+  native-image-classes
+  {:doc     "Builds native image from classes"
+   :depends [compile-uber-sources
+             -graalvm-native-image
+             -native-image-classes-fname
+             -native-image-classes-target]
+   :task (if (seq (fs/modified-since -native-image-classes-fname
+                                     bs/uberjar))
+           (do
+             (println "Building" -native-image-classes-fname)
+             (shell -graalvm-native-image
+                    ;; note: we are omitting --initialize-at-build-time
+                    "-cp" (str bs/uber-class-dir
+                               (System/getProperty "path.separator")
+                               (-> (with-out-str (clojure "-Spath A:uber")) str/trim))
+                    "--no-fallback"
+                    (str "-H:Name=" -native-image-classes-target)
+                    "graal_build_time_test_app.main"))
+           (println "Image is already built" -native-image-classes-fname))}
+
+  native-image-classes-test
+  {:doc "Run native image built from classes"
+   :depends [native-image-classes -native-image-classes-fname]
+   :task (do (println "Running" -native-image-classes-fname)
+             (shell -native-image-classes-fname))}
 
   native-image-test
-  {:doc "Run integration test"
-   :depends [native-image -native-image-fname]
-   :task (shell -native-image-fname)}
+  {:doc "Run integration tests"
+   :depends [native-image-uber-test native-image-classes-test]
+   :task (println "Done.")}
 
   bump-version (do (load-file "scripts/bump_version.clj")
                    (shell "git add resources/clj-easy/graal-build-time-version.txt")
