@@ -15,10 +15,6 @@
 (def version bs/version)
 (def jar-file bs/jar-file)
 
-(defn clean [_]
-  (bs/clean {}))
-
-
 (defn compile-sources [{:keys [class-dir] :or {class-dir class-dir}}]
   (println "Compiling Clojure sources to:" class-dir)
   (b/compile-clj {:basis basis
@@ -54,28 +50,6 @@
               :jar-file jar-file
               :class-dir class-dir})
   (println "Installed" lib version "in local maven repo."))
-
-(def uber-basis
-  (b/create-basis {:project "deps.edn"
-                   :aliases [:uber]}))
-
-(defn compile-uber-sources [_]
-  (println "Compiling test uberjar sources.")
-  (compile-sources {:class-dir bs/uber-class-dir})
-  (println "Compiling test sources to" bs/uber-class-dir)
-  (b/compile-clj {:basis uber-basis
-                  :src-dirs ["test"]
-                  :class-dir bs/uber-class-dir
-                  :ns-compile '[graal-build-time-test-app.main
-                                graal-build-time-test.core]})
-  (println "Done compiling uberjar test sources."))
-
-(defn uber [_]
-  (println "Building test uberjar:" bs/uberjar)
-  (b/uber {:class-dir bs/uber-class-dir
-           :uber-file bs/uberjar
-           :basis uber-basis
-           :main 'graal-build-time-test-app.main}))
 
 (defn deploy [opts]
   (println "Deploying version" jar-file "to Clojars.")

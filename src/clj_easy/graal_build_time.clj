@@ -38,9 +38,9 @@
                         (map #(.getName ^JarFile$JarFileEntry %))
                         (filter #(consider-entry? % jar-entry-file-separator))
                         (map #(entry->package % jar-entry-file-separator))
-                        (remove str/blank?))
-          unique (unique-packages packages)]
-      unique)))
+                        (remove str/blank?)
+                        vec)]
+      packages)))
 
 (defn packages-from-dir [^Path dir]
   (let [f (.toFile dir)
@@ -53,17 +53,20 @@
         packages (->> names
                       (filter #(consider-entry? % (System/getProperty "file.separator")))
                       (map #(entry->package % (System/getProperty "file.separator")))
-                      (remove str/blank?))
-        unique (unique-packages packages)]
-    unique))
+                      (remove str/blank?))]
+    packages))
 
 (defn -packageList [paths]
-  (into-array (distinct
-               (cons "clojure"
-                     (mapcat (fn [path]
-                               (if (str/ends-with? (str path) ".jar")
-                                 (packages-from-jar path)
-                                 (packages-from-dir path))) paths)))))
+  (->> paths
+       (mapcat (fn [path]
+                 (if (str/ends-with? (str path) ".jar")
+                   (packages-from-jar path)
+                   (packages-from-dir path))))
+       unique-packages
+       sort
+       (cons "clojure")
+       distinct
+       into-array))
 
 (defn -packageListStr [pl]
   (str/join ", " pl))

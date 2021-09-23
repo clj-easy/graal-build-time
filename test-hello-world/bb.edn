@@ -1,0 +1,161 @@
+{:tasks
+ {:requires ([babashka.fs :as fs]
+             [babashka.tasks :as tasks]
+             [clojure.string :as str])
+  :enter (when (not (str/starts-with? (:name (current-task)) "-"))
+           (println (format "-[hello-world %s]----" (:name (current-task)))))
+  :init (do
+          (def windows? (str/starts-with? (System/getProperty "os.name")
+                                          "Windows"))
+          (defn clojure
+            "Clojure defaulting to stderr output"
+            [arg & args]
+            (apply tasks/clojure (str "-J-Dclojure.main.report=stderr " arg) args)))
+
+  -test-libs ["lib1" "lib2"]
+  -artifact "target/hello-world.jar"
+
+  clean
+  {:depends [-test-libs]
+   :task (do
+           (doseq [dir ["target" ".cpcache"]]
+             (fs/delete-tree dir))
+           (doseq [p -test-libs]
+             (shell {:dir p} "bb clean")))}
+
+  libs
+  {:doc "Build test libs"
+   :depends [-test-libs]
+   :task (doseq [p -test-libs]
+           (shell {:dir p} "bb build"))}
+
+  graal-build-time-jar
+  {:doc "Build and grab a copy of local graal build time jar from above."
+   :task (do
+           (shell {:dir ".."} "bb jar")
+           (let [jar-name (-> (shell {:out :string :dir ".."}
+                                     "bb jar-name")
+                              :out
+                              str/split-lines
+                              last)]
+             (println "copying" jar-name)
+             (fs/create-dirs "target")
+             (fs/copy (str "../" jar-name)
+                      "target/graal-build-time.jar"
+                      {:replace-existing true})))}
+
+  build {:doc "Build classes and uberjar"
+         :depends [libs
+                   -artifact
+                   graal-build-time-jar]
+         :task
+         (if (seq (fs/modified-since -artifact ["../lib1/target/lib1.jar"
+                                                "../lib2/target/lib2.jar"
+                                                "src"
+                                                "bb.edn"
+                                                "deps.edn"
+                                                "build.clj"]))
+           (do
+             (println "Building" -artifact)
+             (clojure "-T:build uber"))
+           (println -artifact "already built"))}
+
+  graalvm {:doc "Checks GRAALVM_HOME env var"
+           :task
+           (let [env (System/getenv "GRAALVM_HOME")]
+             (assert env "Set GRAALVM_HOME")
+             env)}
+
+  -graalvm-native-image
+  {:doc "Installs/resolves graalvm native-image binary"
+   :depends [graalvm]
+   :task (do (shell (str (fs/file graalvm
+                                  "bin"
+                                  (if windows?
+                                    "gu.cmd"
+                                    "gu")))
+                    "install" "native-image")
+             (str (fs/file graalvm
+                           "bin"
+                           (if windows?
+                             "native-image.cmd"
+                             "native-image"))))}
+
+  ;;
+  ;; native image from uber
+  ;;
+
+  -native-image-uber-target
+  "target/hello-world-uber"
+
+  -native-image-uber-fname
+  {:depends [-native-image-uber-target]
+   :task (str -native-image-uber-target (when windows? ".exe"))}
+
+  native-image-uber
+  {:doc     "Builds native image from uber"
+   :depends [build
+             -graalvm-native-image
+             -native-image-uber-fname
+             -native-image-uber-target]
+   :task (if (seq (fs/modified-since -native-image-uber-fname ["target/hello-world.jar"]))
+           (do
+             (println "Building" -native-image-uber-fname)
+             (shell -graalvm-native-image
+                    ;; note: we are omitting --initialize-at-build-time
+                    "-jar" "target/hello-world.jar"
+                    "--no-fallback"
+                    (str "-H:Name=" -native-image-uber-target)))
+           (println "Already built" -native-image-uber-fname))}
+
+  native-image-uber-test
+  {:doc "Run native image built from uber"
+   :depends [native-image-uber -native-image-uber-fname]
+   :task (do (println "Running" -native-image-uber-fname)
+             (shell -native-image-uber-fname))}
+
+  ;;
+  ;; native image from classes
+  ;;
+
+  -native-image-classes-target
+  "target/hello-world-classes"
+
+  -native-image-classes-fname
+  {:depends [-native-image-classes-target]
+   :task (str -native-image-classes-target (when windows? ".exe"))}
+
+  native-image-classes
+  {:doc     "Builds native image from classes"
+   :depends [build
+             -graalvm-native-image
+             -native-image-classes-fname
+             -native-image-classes-target]
+   :task
+   (do
+     (if (seq (fs/modified-since -native-image-classes-fname "target/classes"))
+       (do
+         (println "Building" -native-image-classes-fname)
+         (shell -graalvm-native-image
+                ;; note: we are omitting --initialize-at-build-time
+                "-cp" (str "target/classes"
+                           (System/getProperty "path.separator")
+                           (-> (with-out-str (clojure "-Spath")) str/trim))
+                "--no-fallback"
+                (str "-H:Name=" -native-image-classes-target)
+                "hello_world.main")))
+     (println "Already built" -native-image-classes-fname))}
+
+  native-image-classes-test
+  {:doc "Run native image built from classes"
+   :depends [native-image-classes -native-image-classes-fname]
+   :task (do (println "Running" -native-image-classes-fname)
+             (shell -native-image-classes-fname))}
+
+  ;;
+  ;; run all native image tests
+  ;;
+  native-image-test
+  {:doc "Run integration tests"
+   :depends [native-image-uber-test native-image-classes-test]
+   :task (println "Done.")}}}

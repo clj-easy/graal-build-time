@@ -1,0 +1,15 @@
+{:tasks
+ {:requires ([babashka.fs :as fs]
+             [clojure.string :as str])
+  :enter (when (not (str/starts-with? (:name (current-task)) "-"))
+           (println (format "-[lib1 %s]----" (:name (current-task)))))
+
+  clean (doseq [dir ["target" ".cpcache"]]
+          (fs/delete-tree dir))
+  -artifact "target/lib1.jar"
+  build {:depends [-artifact]
+         :task
+         (if (seq (fs/modified-since -artifact ["src" "bb.edn" "deps.edn" "build.clj"]))
+           (do (println "Building" -artifact)
+               (clojure "-T:build jar"))
+           (println -artifact "already built"))}}}

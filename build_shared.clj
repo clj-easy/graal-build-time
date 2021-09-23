@@ -15,6 +15,3 @@
 (def sources ["src"])
 (def class-dir (str target "/classes"))
 (def uber-class-dir (str target "/uber-classes"))
-
-(defn clean [_]
-  (fs/delete-tree target))
