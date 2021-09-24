@@ -51,16 +51,52 @@
                      :task (shell {:dir "test-hello-world"}
                                   "bb native-image-test")}
 
-  bump-version (do (load-file "scripts/bump_version.clj")
-                   (shell "git add resources/clj-easy/graal-build-time-version.txt")
-                   (shell "git commit -m 'Bump version'")
-                   (bs/refresh-version))
+  change-log-check {:doc "Checks that change log is ready for publish"
+                    :task (let [log (slurp "CHANGELOG.md")
+                                new-changes (last (re-find (re-pattern "(?ms)^## Unreleased *$(.*?)^##|\\z") log))]
+                            (if (not (and new-changes (re-find (re-pattern "(?ims)[a-z]") new-changes)))
+                              (do
+                                (println "FAIL: Change log must contain Unreleased section with some text.")
+                                (System/exit 1))
+                              (println "PASS: Change log Unreleased section found with some text.")))}
 
-  tag (shell (str "git tag v" bs/version))
+  -change-log-update {:doc "Updates change log for current version"
+                      :depends [change-log-check]
+                      :task (do
+                              (println "Updating change log")
+                              (bs/refresh-version)
+                              (let [log (slurp "CHANGELOG.md")
+                                    new-log (str/replace-first
+                                             log
+                                             (re-pattern "(?ms)^## Unreleased *$")
+                                             (str "## Unreleased\n\n-\n\n## v" bs/version))]
+                                (spit "CHANGELOG.md" new-log)
+                                (println (str "Change log updated for v" bs/version))))}
 
-  publish {:task (do
-                   (run 'bump-version)
-                   (run 'tag)
+  -bump-version (do
+                  (bs/refresh-version)
+                  (println "Bumping current version" bs/version)
+                  (load-file "scripts/bump_version.clj")
+                  (bs/refresh-version)
+                  (println "Bumped version to" bs/version))
+
+  -commit-release (do
+                    (println "Committing changes made for release")
+                    (shell "git add resources/clj-easy/graal-build-time-version.txt CHANGELOG.md")
+                    (shell "git commit -m 'Bump version'"))
+
+  -tag (do
+         (println (str "Tagging with version v" bs/version))
+         (shell (str "git tag v" bs/version)))
+
+  publish {:doc "Cut a new release"
+           :task (do
+                   (run 'change-log-check)
+                   (run '-bump-version)
+                   (run '-change-log-update)
+                   (run '-commit-release)
+                   (run '-tag)
+                   (println "Pushing commit to github")
                    (shell "git push --atomic origin main"
                           (str "v" bs/version)))}
 
@@ -71,7 +107,7 @@
   -can-release {:depends [-current-branch]
                 :task (= "main" -current-branch)}
 
-  deploy {:doc "Deploys to clojars"
+  deploy {:doc "Deploys to clojars, automatically run on CI"
           :depends [-can-release]
           :task (if -can-release
                   (do

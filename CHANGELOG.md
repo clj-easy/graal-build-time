@@ -1,5 +1,6 @@
 # Changelog
 
+<!-- Our publish process updates Unreleased header appropriately, do not update by hand -->
 ## Unreleased
 
 - Our output lines during a `native-image` build are now identified with prefix `[clj-easy/graal-build-time]` [#18](https://github.com/clj-easy/graal-build-time/pull/18)
