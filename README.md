@@ -12,8 +12,12 @@ registers classes created by Clojure as such, so you don't have to.
 
 ## Usage
 
-Just include this library on your classpath in your native-image build, that's
-it. During the image build you will see a line of output like:
+For you `native-image` build:
+1. If you are using a global `--intialize-at-build-time`, remove it. 
+2. Include this library on your classpath.
+This is typically done by simply adding this library to your project dependencies (see clojars link above).
+
+During the image build, you will a line of output like:
 
     Registering packages for build time initialization: clojure, clj_easy
 
