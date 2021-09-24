@@ -13,13 +13,13 @@ registers classes created by Clojure as such, so you don't have to.
 ## Usage
 
 For you `native-image` build:
-1. If you are using a global `--intialize-at-build-time`, remove it. 
+1. If you are using a global `--intialize-at-build-time`, remove it.
 2. Include this library on your classpath.
 This is typically done by simply adding this library to your project dependencies (see clojars link above).
 
 During the image build, you will a line of output like:
 
-    Registering packages for build time initialization: clojure, clj_easy
+    [clj-easy/graal-build-time] Registering packages for build time initialization: clojure, clj_easy
 
 ## How does it work
 
@@ -61,14 +61,14 @@ The the work that this deprecated option carried out is now taken care of by `gr
     ```
     [target/native-test-classes:34725]    classlist:   1,627.53 ms,  0.96 GB
     [target/native-test-classes:34725]        (cap):   1,892.39 ms,  0.96 GB
-    WARN: Single segment package found for class: single_segment_example__init.class. This class has no package and it will not be added to the result packages.
-    Registering packages for build time initialization: clojure, graal_build_time_test, graal_build_time_test_app, clj_easy
+    [clj-easy/graal-build-time] WARN: Single segment package found for class: single_segment_example__init.class. This class has no package and it will not be added to the result packages.
+    [clj-easy/graal-build-time] Registering packages for build time initialization: clojure, graal_build_time_test, graal_build_time_test_app, clj_easy
     [target/native-test-classes:34725]        setup:   3,885.01 ms,  0.96 GB
     [target/native-test-classes:34725]     (clinit):     219.91 ms,  1.74 GB
     ```
-    The following lines are coming from graal-build-time:
-    - `Registering packages for build time initialization...` will always appear
-    - `WARN: Single segment package found...` will appear to warn you of the repercussions of a compiled Clojure single segment found in your build.
+    Note:
+    - `[clj-easy/graal-build-time] Registering packages for build time initialization...` will always appear
+    - `[clj-easy/graal-build-time] WARN: Single segment package found...` will appear to warn you of the repercussions of a compiled Clojure single segment namespace found in your build.
 
 # License
 

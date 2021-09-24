@@ -14,7 +14,7 @@ public class InitAtBuildTimeFeature implements Feature {
         List<Path> classPath = access.getApplicationClassPath();
         String[] packages = clj_easy.graal_build_time.packageList(classPath);
         String packagesStr = clj_easy.graal_build_time.packageListStr(packages);
-        System.out.println("Registering packages for build time initialization: " + packagesStr);
+        System.out.println("[clj-easy/graal-build-time] Registering packages for build time initialization: " + packagesStr);
         RuntimeClassInitialization.initializeAtBuildTime(packages);
     }
 
