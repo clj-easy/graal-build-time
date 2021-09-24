@@ -1,0 +1,7 @@
+{:paths ["src"]
+ :deps {lib1/lib1 {:local/root "lib1/target/lib1.jar"}
+        lib2/lib2 {:local/root "lib2/target/lib2.jar"}
+        clj-easy/graal-build-time {:local/root "target/graal-build-time.jar"}}
+ :aliases {:build {:deps {io.github.clojure/tools.build {:git/tag "v0.5.1" :git/sha "21da7d4"}
+                          babashka/fs {:mvn/version "0.0.5"}}
+                   :ns-default build}}}

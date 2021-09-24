@@ -1,6 +1,5 @@
-/target
-/.cpcache
-/test.build_artifacts.txt
+target
+.cpcache
 .clj-kondo/.cache
 .lsp
 !.lsp/config.edn

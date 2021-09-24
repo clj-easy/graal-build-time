@@ -6,6 +6,7 @@ jobs:
   test:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os:
           - ubuntu-latest
@@ -31,7 +32,8 @@ jobs:
         with:
           path: |
             ~/.m2/repository
-          key: ${{ runner.os }}-graal-build-time-${{ hashFiles('deps.edn') }}
+            ~/.gitlibs
+          key: ${{ runner.os }}-graal-build-time-${{ hashFiles('**/deps.edn') }}
           restore-keys: "$graal-build-time-"
 
       - name: Setup build tools
@@ -62,7 +64,8 @@ jobs:
         with:
           path: |
             ~/.m2/repository
-          key: ${{ runner.os }}-graal-build-time-${{ hashFiles('deps.edn') }}
+            ~/.gitlibs
+          key: ${{ runner.os }}-graal-build-time-${{ hashFiles('**/deps.edn') }}
           restore-keys: "$graal-build-time-"
 
       - name: Deploy to clojars
