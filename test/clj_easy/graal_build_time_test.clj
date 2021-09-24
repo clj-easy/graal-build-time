@@ -8,7 +8,7 @@
   (-> (p/process ["bb" "build-hello-world"] {:inherit true})
       (p/check))
   (let [expected-packages "clojure, clj_easy, gbt_test_org, hello, hello_world"
-        expected-warning #"WARN: Single segment .* single_segment_example__init.class"]
+        expected-warning #"^\[clj-easy/graal-build-time\] WARN: Single segment .* single_segment_example__init.class"]
     (testing "packages from directory"
       (is (re-find
             expected-warning

@@ -13,7 +13,7 @@
                      drop-last
                      (str/join "."))]
     (when (str/blank? package)
-      (println (str "WARN: Single segment package found for class: " nm ". This class has no package and it will not be added to the result packages.")))
+      (println (str "[clj-easy/graal-build-time] WARN: Single segment package found for class: " nm ". This class has no package and it will not be added to the result packages.")))
     package))
 
 (defn ^:private consider-entry? [nm file-sep]
