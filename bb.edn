@@ -52,26 +52,11 @@
                                   "bb native-image-test")}
 
   change-log-check {:doc "Checks that change log is ready for publish"
-                    :task (let [log (slurp "CHANGELOG.md")
-                                new-changes (last (re-find (re-pattern "(?ms)^## Unreleased *$(.*?)^##|\\z") log))]
-                            (if (not (and new-changes (re-find (re-pattern "(?ims)[a-z]") new-changes)))
-                              (do
-                                (println "FAIL: Change log must contain Unreleased section with some text.")
-                                (System/exit 1))
-                              (println "PASS: Change log Unreleased section found with some text.")))}
+                    :task (bs/change-log-check)}
 
   -change-log-update {:doc "Updates change log for current version"
                       :depends [change-log-check]
-                      :task (do
-                              (println "Updating change log")
-                              (bs/refresh-version)
-                              (let [log (slurp "CHANGELOG.md")
-                                    new-log (str/replace-first
-                                             log
-                                             (re-pattern "(?ms)^## Unreleased *$")
-                                             (str "## Unreleased\n\n-\n\n## v" bs/version))]
-                                (spit "CHANGELOG.md" new-log)
-                                (println (str "Change log updated for v" bs/version))))}
+                      :task (bs/change-log-update)}
 
   -bump-version (do
                   (bs/refresh-version)
