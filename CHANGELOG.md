@@ -4,8 +4,8 @@
 ## Unreleased
 
 - Our output lines during a `native-image` build are now identified with prefix `[clj-easy/graal-build-time]` [#18](https://github.com/clj-easy/graal-build-time/pull/18)
-
 - Child package `hello.world` from classpath element x is now properly excluded when parent package `hello` occurs in classpath element y [#17](https://github.com/clj-easy/graal-build-time/pull/17)
+- Add source control management (scm) info within our jar so that clojars and others can point back to our github repo [#19](https://github.com/clj-easy/graal-build-time/pull/19)
 
 ## v0.1.3
 
