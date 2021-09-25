@@ -31,11 +31,16 @@
 
 (defn jar [_]
   (println "Producing jar:" jar-file)
-  (b/write-pom {:class-dir class-dir
-                :lib lib
-                :version version
-                :basis basis
-                :src-dirs ["src"]})
+  (let [gh-coords "github.com/clj-easy/graal-build-time"]
+    (b/write-pom {:class-dir class-dir
+                  :lib lib
+                  :version version
+                  :scm {:connection (format "scm:git:git://%s.git" gh-coords)
+                        :developerConnection (format "scm:git:ssh://git@%s.git" gh-coords)
+                        :tag (format "v%s" version)
+                        :url (format "https://%s" gh-coords)}
+                  :basis basis
+                  :src-dirs ["src"]}))
   (b/copy-dir {:src-dirs ["src" "resources"]
                :target-dir class-dir})
   (b/jar {:class-dir class-dir
