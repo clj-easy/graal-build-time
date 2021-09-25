@@ -1,4 +1,4 @@
-(ns clj-easy.graal-build-time
+(ns ^:no-doc clj-easy.graal-build-time
   (:require [clojure.string :as str])
   (:import [java.nio.file Path]
            [java.util.jar JarFile JarFile$JarFileEntry])
@@ -6,9 +6,9 @@
    :methods [^{:static true} [packageList [java.util.List] "[Ljava.lang.String;"]
              ^{:static true} [packageListStr ["[Ljava.lang.String;"] String]]))
 
-(def jar-entry-file-separator "/")
+(def ^:private jar-entry-file-separator "/")
 
-(defn entry->package [nm split]
+(defn ^:private entry->package [nm split]
   (let [package (->> (str/split nm (re-pattern (str/re-quote-replacement split)))
                      drop-last
                      (str/join "."))]
@@ -25,12 +25,12 @@
               (str/starts-with? (str package ".")  (str % ".")))
         packages))
 
-(defn unique-packages [packages]
+(defn ^:private unique-packages [packages]
   (->> packages
        (remove (partial contains-parent? packages))
        set))
 
-(defn packages-from-jar
+(defn ^:private packages-from-jar
   [^Path jar-file]
   (with-open [jar (JarFile. (.toFile jar-file))]
     (let [entries (enumeration-seq (.entries jar))
@@ -42,7 +42,7 @@
                         vec)]
       packages)))
 
-(defn packages-from-dir [^Path dir]
+(defn ^:private packages-from-dir [^Path dir]
   (let [f (.toFile dir)
         files (rest (file-seq f))
         relatives (map (fn [^java.io.File f]
