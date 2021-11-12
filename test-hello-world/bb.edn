@@ -14,6 +14,7 @@
 
   -test-libs ["lib1" "lib2"]
   -artifact "target/hello-world.jar"
+  -native-image-path "target"
 
   clean
   {:depends [-test-libs]
@@ -84,20 +85,19 @@
   ;;
   ;; native image from uber
   ;;
-
-  -native-image-uber-target
-  "target/hello-world-uber"
+  -native-image-uber-name
+  "hello-world-uber"
 
   -native-image-uber-fname
-  {:depends [-native-image-uber-target]
-   :task (str -native-image-uber-target (when windows? ".exe"))}
+  {:depends [-native-image-path -native-image-uber-name]
+   :task (str -native-image-path "/" -native-image-uber-name (when windows? ".exe"))}
 
   native-image-uber
   {:doc     "Builds native image from uber"
    :depends [build
              -graalvm-native-image
              -native-image-uber-fname
-             -native-image-uber-target]
+             -native-image-uber-name]
    :task (if (seq (fs/modified-since -native-image-uber-fname ["target/hello-world.jar"]))
            (do
              (println "Building" -native-image-uber-fname)
@@ -105,7 +105,8 @@
                     ;; note: we are omitting --initialize-at-build-time
                     "-jar" "target/hello-world.jar"
                     "--no-fallback"
-                    (str "-H:Name=" -native-image-uber-target)))
+                    (str "-H:Path=" -native-image-path)
+                    (str "-H:Name=" -native-image-uber-name)))
            (println "Already built" -native-image-uber-fname))}
 
   native-image-uber-test
@@ -117,20 +118,19 @@
   ;;
   ;; native image from classes
   ;;
-
-  -native-image-classes-target
-  "target/hello-world-classes"
+  -native-image-classes-name
+  "hello-world-classes"
 
   -native-image-classes-fname
-  {:depends [-native-image-classes-target]
-   :task (str -native-image-classes-target (when windows? ".exe"))}
+  {:depends [-native-image-path -native-image-classes-name]
+   :task (str -native-image-path "/" -native-image-classes-name (when windows? ".exe"))}
 
   native-image-classes
   {:doc     "Builds native image from classes"
    :depends [build
              -graalvm-native-image
              -native-image-classes-fname
-             -native-image-classes-target]
+             -native-image-classes-name]
    :task
    (do
      (if (seq (fs/modified-since -native-image-classes-fname "target/classes"))
@@ -142,7 +142,8 @@
                            (System/getProperty "path.separator")
                            (-> (with-out-str (clojure "-Spath")) str/trim))
                 "--no-fallback"
-                (str "-H:Name=" -native-image-classes-target)
+                (str "-H:Path=" -native-image-path)
+                (str "-H:Name=" -native-image-classes-name)
                 "hello_world.main")))
      (println "Already built" -native-image-classes-fname))}
 
