@@ -17,15 +17,15 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup GraalVM
-        uses: DeLaGuardo/setup-graalvm@4.0
+        uses: DeLaGuardo/setup-graalvm@5.0
         with:
-          graalvm: "21.2.0"
+          graalvm: "21.3.0"
           java: java11
 
       - name: Setup Babashka
         uses: turtlequeue/setup-babashka@v1.3.0
         with:
-          babashka-version: 0.6.0
+          babashka-version: 0.6.4
 
       - name: Apply Cache
         uses: actions/cache@v2
@@ -57,7 +57,7 @@ jobs:
       - name: Setup Babashka
         uses: turtlequeue/setup-babashka@v1.3.0
         with:
-          babashka-version: 0.6.0
+          babashka-version: 0.6.4
 
       - name: Apply Cache
         uses: actions/cache@v2
