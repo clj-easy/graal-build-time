@@ -17,7 +17,7 @@ For you `native-image` build:
 2. Include this library on your classpath.
 This is typically done by simply adding this library to your project dependencies (see clojars link above).
 
-During the image build, you will a line of output like:
+During the image build, you will see a line of output like:
 
     [clj-easy/graal-build-time] Registering packages for build time initialization: clojure, clj_easy
 
@@ -55,7 +55,7 @@ Use `bb native-image-test` to run our integration tests.
   - one built from the uberjar
   - the other built directly from the classes dir
 - Note that we omit `--initialize-at-build-time` when creating the native images.
-The the work that this deprecated option carried out is now taken care of by `graal-build-time`.
+The work that this deprecated option carried out is now taken care of by `graal-build-time`.
 - During native image creation, you'll see output that looks like this:
 
     ```
