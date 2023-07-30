@@ -16,8 +16,7 @@
   (println "Compiling Clojure sources to:" class-dir)
   (b/compile-clj {:basis basis
                   :src-dirs bs/sources
-                  :class-dir class-dir
-                  :ns-compile '[clj-easy.graal-build-time]})
+                  :class-dir class-dir})
   (println "Done compiling Clojure sources.")
   (println "Compiling java sources.")
   (b/javac {:src-dirs bs/sources
@@ -28,7 +27,7 @@
                                          ;; match that
                                          ;; --release was introduce after jdk8, so we'll fail
                                          ;; if compiling with <= jdk8, which is fine.
-                         "-Xlint"]})
+                         "-Xlint:-options" "-Werror"]})
   (println "Done compiling java sources."))
 
 (defn jar [_]
