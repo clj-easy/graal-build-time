@@ -62,7 +62,7 @@ jobs:
         with:
           bb: 'latest'
 
-      # any JDK will do to compile sources, but let's choose one
+      # any JDK > JDK8 will do to compile sources, but let's deliberately choose one
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
