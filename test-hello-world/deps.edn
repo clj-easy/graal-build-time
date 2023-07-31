@@ -2,6 +2,6 @@
  :deps {lib1/lib1 {:local/root "lib1/target/lib1.jar"}
         lib2/lib2 {:local/root "lib2/target/lib2.jar"}
         clj-easy/graal-build-time {:local/root "target/graal-build-time.jar"}}
- :aliases {:build {:deps {io.github.clojure/tools.build {:git/tag "v0.6.3" :git/sha "4a1b53a"}
+ :aliases {:build {:deps {io.github.clojure/tools.build {:mvn/version "0.9.4"}
                           babashka/fs {:mvn/version "0.1.0"}}
                    :ns-default build}}}
