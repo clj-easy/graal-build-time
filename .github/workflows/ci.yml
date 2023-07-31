@@ -4,14 +4,19 @@ on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}-latest
     strategy:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest
-          - windows-latest
-
+          - 'ubuntu'
+          - 'windows'
+        distribution:
+          - 'graalvm'
+          - 'graalvm-community'
+        java-version:
+          - '17.0.8'
+          - '20.0.2'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -19,8 +24,8 @@ jobs:
       - name: Setup GraalVM
         uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '17.0.8'
-          distribution: 'graalvm-community'
+          java-version: ${{ matrix.java-version }}
+          distribution: ${{ matrix.distribution }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Babashka
