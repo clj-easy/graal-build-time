@@ -14,30 +14,33 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup GraalVM
-        uses: DeLaGuardo/setup-graalvm@5.0
+        uses: graalvm/setup-graalvm@v1
         with:
-          graalvm: "21.3.0"
-          java: java11
+          java-version: '17.0.8'
+          distribution: 'graalvm-community'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Babashka
-        uses: turtlequeue/setup-babashka@v1.3.0
+        uses: DeLaGuardo/setup-clojure@11.0
         with:
-          babashka-version: 0.6.4
+          bb: 'latest'
+
+      - name: Tools versions
+        run: |
+          java --version
+          bb --version
 
       - name: Apply Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.m2/repository
             ~/.gitlibs
           key: ${{ runner.os }}-graal-build-time-${{ hashFiles('**/deps.edn') }}
           restore-keys: "$graal-build-time-"
-
-      - name: Setup build tools
-        uses: ilammy/msvc-dev-cmd@v1
 
       - name: Run tests
         run: bb test
@@ -52,15 +55,27 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Babashka
-        uses: turtlequeue/setup-babashka@v1.3.0
+        uses: DeLaGuardo/setup-clojure@11.0
         with:
-          babashka-version: 0.6.4
+          bb: 'latest'
+
+      # any JDK will do to compile sources, but let's choose one
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Tools versions
+        run: |
+          java --version
+          bb --version
 
       - name: Apply Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.m2/repository

@@ -67,20 +67,16 @@
              (assert env "Set GRAALVM_HOME")
              env)}
 
-  -graalvm-native-image
-  {:doc "Installs/resolves graalvm native-image binary"
-   :depends [graalvm]
-   :task (do (shell (str (fs/file graalvm
-                                  "bin"
-                                  (if windows?
-                                    "gu.cmd"
-                                    "gu")))
-                    "install" "native-image")
-             (str (fs/file graalvm
-                           "bin"
-                           (if windows?
-                             "native-image.cmd"
-                             "native-image"))))}
+  -graalvm-native-image-exe
+  {:doc "Resolves and returns graalvm native-image binary"
+   :task (when-let [native-image (if-let [ghome (System/getenv "GRAALVM_HOME")]
+                                   (or (fs/which (fs/file ghome "bin" "native-image"))
+                                       (throw (ex-info "Could not find GraalVM native-image via GRAALVM_HOME." {})))
+                                   (or (fs/which "native-image")
+                                       (throw (ex-info "GRAALVM_HOME not set, and did not find GraalVM native-image on PATH" {}))))]
+           (println "Using GraalVM native-image:" (str native-image))
+           (shell native-image "--version")
+           native-image)}
 
   ;;
   ;; native image from uber
@@ -95,13 +91,13 @@
   native-image-uber
   {:doc     "Builds native image from uber"
    :depends [build
-             -graalvm-native-image
+             -graalvm-native-image-exe
              -native-image-uber-fname
              -native-image-uber-name]
    :task (if (seq (fs/modified-since -native-image-uber-fname ["target/hello-world.jar"]))
            (do
              (println "Building" -native-image-uber-fname)
-             (shell -graalvm-native-image
+             (shell -graalvm-native-image-exe
                     ;; note: we are omitting --initialize-at-build-time
                     "-jar" "target/hello-world.jar"
                     "--no-fallback"
@@ -128,7 +124,7 @@
   native-image-classes
   {:doc     "Builds native image from classes"
    :depends [build
-             -graalvm-native-image
+             -graalvm-native-image-exe
              -native-image-classes-fname
              -native-image-classes-name]
    :task
@@ -136,7 +132,7 @@
      (if (seq (fs/modified-since -native-image-classes-fname "target/classes"))
        (do
          (println "Building" -native-image-classes-fname)
-         (shell -graalvm-native-image
+         (shell -graalvm-native-image-exe
                 ;; note: we are omitting --initialize-at-build-time
                 "-cp" (str "target/classes"
                            (System/getProperty "path.separator")
