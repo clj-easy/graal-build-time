@@ -23,7 +23,12 @@
   (b/javac {:src-dirs bs/sources
             :class-dir class-dir
             :basis with-svm-basis
-            :javac-opts ["-source" "8" "-target" "8"]})
+            :javac-opts ["--release" "8" ;; technically jdk 17 is current graal min, but clojure
+                                         ;; produces jdk 8 compat classes, so we'll arbitrarily
+                                         ;; match that
+                                         ;; --release was introduce after jdk8, so we'll fail
+                                         ;; if compiling with <= jdk8, which is fine.
+                         "-Xlint"]})
   (println "Done compiling java sources."))
 
 (defn jar [_]
