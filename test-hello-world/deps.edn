@@ -3,5 +3,5 @@
         lib2/lib2 {:local/root "lib2/target/lib2.jar"}
         clj-easy/graal-build-time {:local/root "target/graal-build-time.jar"}}
  :aliases {:build {:deps {io.github.clojure/tools.build {:mvn/version "0.9.4"}
-                          babashka/fs {:mvn/version "0.1.0"}}
+                          babashka/fs {:mvn/version "0.4.19"}}
                    :ns-default build}}}
