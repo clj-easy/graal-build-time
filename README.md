@@ -71,7 +71,7 @@ Single segment namespaces are problematic in general in Clojure and, because the
 `graal-build-time` will emit a warning when it detects `.class` files generated from a single segment namespace, for example:
 
 ```
-[clj-easy/graal-build-time] WARN: Single segment namespace found for class: digest__init.class. Because this class has no package, it cannot be registered for initialization at build time.` 
+[clj-easy/graal-build-time] WARN: Single segment namespace found for class: digest__init.class. Because this class has no package, it cannot be registered for initialization at build time. 
 ```
 
 ## Develop
@@ -92,12 +92,8 @@ The work that this deprecated option carried out is now taken care of by `graal-
 - During native image creation, you'll see output that looks like:
 
     ```
-    [target/native-test-classes:34725]    classlist:   1,627.53 ms,  0.96 GB
-    [target/native-test-classes:34725]        (cap):   1,892.39 ms,  0.96 GB
     [clj-easy/graal-build-time] WARN: Single segment namespace found for class: single_segment_example__init.class. Because this class has no package, it cannot be registered for initialization at build time.
     [clj-easy/graal-build-time] Registering packages for build time initialization: clojure, clj_easy.graal_build_time, gbt_test_org, hello, hello_world
-    [target/native-test-classes:34725]        setup:   3,885.01 ms,  0.96 GB
-    [target/native-test-classes:34725]     (clinit):     219.91 ms,  1.74 GB
     ```
     Note:
     - `[clj-easy/graal-build-time] Registering packages for build time initialization...` will always appear
