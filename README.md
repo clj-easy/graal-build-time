@@ -103,4 +103,4 @@ The work that this deprecated option carried out is now taken care of by `graal-
 
 Licensed under the MIT license, see LICENSE.
 
-Copyright © 2023 Michiel Borkent, Eric Dallo, Rahul Dé, Lee Read and contributors.
+Copyright © 2021-2023 Michiel Borkent, Eric Dallo, Rahul Dé, Lee Read and contributors.
