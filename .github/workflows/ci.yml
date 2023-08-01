@@ -3,6 +3,36 @@ name: Test and Deploy
 on: [push, pull_request]
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Babashka
+        uses: DeLaGuardo/setup-clojure@11.0
+        with:
+          bb: 'latest'
+
+      - name: Apply Cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.deps.clj
+            ~/.gitlibs
+          key: lint-graal-build-time-${{ hashFiles('deps.edn','bb.edn') }}
+          restore-keys: "lint-graal-build-time-"
+
+      - name: Lint
+        run: bb lint
+
   test:
     runs-on: ${{ matrix.os }}-latest
     strategy:
@@ -43,9 +73,10 @@ jobs:
         with:
           path: |
             ~/.m2/repository
+            ~/.deps.clj
             ~/.gitlibs
           key: ${{ runner.os }}-graal-build-time-${{ hashFiles('**/deps.edn') }}
-          restore-keys: "$graal-build-time-"
+          restore-keys: ${{ runner.os }}-graal-build-time-
 
       - name: Run tests
         run: bb test
@@ -54,7 +85,7 @@ jobs:
         run: bb native-image-test
 
   deploy:
-    needs: test
+    needs: [lint, test]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
@@ -84,9 +115,10 @@ jobs:
         with:
           path: |
             ~/.m2/repository
+            ~/.deps.clj
             ~/.gitlibs
           key: ${{ runner.os }}-graal-build-time-${{ hashFiles('**/deps.edn') }}
-          restore-keys: "$graal-build-time-"
+          restore-keys: ${{ runner.os }}-graal-build-time-
 
       - name: Deploy to clojars
         env:

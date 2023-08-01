@@ -1,0 +1,2 @@
+{:config-paths ^:replace [] ;; don't include user configs
+ }
