@@ -122,6 +122,6 @@ jobs:
 
       - name: Deploy to clojars
         env:
-          CLOJARS_USERNAME: borkdude
-          CLOJARS_PASSWORD: ${{ secrets.CLOJARS_ORG_TOKEN }}
+          CLOJARS_USERNAME: ${{ secrets.CLOJARS_ORG_USERNAME }}
+          CLOJARS_PASSWORD: ${{ secrets.CLOJARS_ORG_PASSWORD }}
         run: bb deploy
