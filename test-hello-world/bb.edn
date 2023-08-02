@@ -100,6 +100,7 @@
              (shell -graalvm-native-image-exe
                     ;; note: we are omitting --initialize-at-build-time
                     "-jar" "target/hello-world.jar"
+                    "--features=clj_easy.graal_build_time.InitClojureClasses"
                     "-O1" ;; basic optimization for faster build
                     "--no-fallback"
                     (str "-H:Path=" -native-image-path)
@@ -138,6 +139,7 @@
                 "-cp" (str "target/classes"
                            (System/getProperty "path.separator")
                            (-> (with-out-str (clojure "-Spath")) str/trim))
+                "--features=clj_easy.graal_build_time.InitClojureClasses"
                 "-O1" ;; basic optimization for faster build
                 "--no-fallback"
                 (str "-H:Path=" -native-image-path)

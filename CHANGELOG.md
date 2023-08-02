@@ -3,7 +3,10 @@
 <!-- Our publish process updates Unreleased header appropriately, do not update by hand -->
 ## Unreleased
 
--
+- ⚠️ _**You'll need to update your `native-image` command line**_ ⚠️ - Adapt to GraalVM deprecation
+  - The Graal team has deprecated automatic discovery of GraalVM `native-image` `Feature` classes. They feel it is safer for you to explicitly opt in when enabling features. 
+  - Since `graal-build-time` was implemented as an auto-discovered Feature class, we have adapted to this change.
+  - After upgrading, you need to add `--features=clj_easy.graal_build_time.InitClojureClasses` to your `native-image` command line.
 
 ## v0.1.4
 

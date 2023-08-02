@@ -1,10 +1,10 @@
-(ns ^:no-doc clj-easy.graal-build-time
+(ns ^:no-doc clj-easy.graal-build-time.packages
   (:require [clojure.string :as str])
   (:import [java.nio.file Path]
            [java.util.jar JarFile JarFile$JarFileEntry])
   (:gen-class
-   :methods [^{:static true} [packageList [java.util.List] "[Ljava.lang.String;"]
-             ^{:static true} [packageListStr ["[Ljava.lang.String;"] String]]))
+   :methods [^{:static true} [list [java.util.List] "[Ljava.lang.String;"]
+             ^{:static true} [listStr ["[Ljava.lang.String;"] String]]))
 
 (def ^:private jar-entry-file-separator "/")
 
@@ -13,7 +13,8 @@
                      drop-last
                      (str/join "."))]
     (when (str/blank? package)
-      (println (str "[clj-easy/graal-build-time] WARN: Single segment package found for class: " nm ". This class has no package and it will not be added to the result packages.")))
+      (println (str "[clj-easy/graal-build-time] WARN: Single segment namespace found for class: " nm ". "
+                    "Because this class has no package, it cannot be registered for initialization at build time.")))
     package))
 
 (defn ^:private consider-entry? [nm file-sep]
@@ -56,7 +57,7 @@
                       (remove str/blank?))]
     packages))
 
-(defn -packageList [paths]
+(defn -list [paths]
   (->> paths
        (mapcat (fn [path]
                  (if (str/ends-with? (str path) ".jar")
@@ -68,5 +69,5 @@
        distinct
        into-array))
 
-(defn -packageListStr [pl]
+(defn -listStr [pl]
   (str/join ", " pl))
