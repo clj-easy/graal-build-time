@@ -1,0 +1,45 @@
+{:tasks
+ {:requires ([babashka.fs :as fs]
+             [babashka.tasks :as tasks]
+             [clojure.string :as str])
+  :enter (when (not (str/starts-with? (:name (current-task)) "-"))
+           (println (format "-[test-single-segment %s]----" (:name (current-task)))))
+  :init (do
+          (defn clojure
+            "Clojure defaulting to stderr output"
+            [arg & args]
+            (apply tasks/clojure (str "-J-Dclojure.main.report=stderr " arg) args)))
+
+  -artifact "target/single-segment.jar"
+
+  clean
+  {:task (doseq [dir ["target" ".cpcache"]]
+           (fs/delete-tree dir))}
+
+  graal-build-time-jar
+  {:doc "Build and grab a copy of local graal build time jar from above."
+   :task (do
+           (shell {:dir ".."} "bb jar")
+           (let [jar-name (-> (shell {:out :string :dir ".."}
+                                     "bb jar-name")
+                              :out
+                              str/split-lines
+                              last)]
+             (println "copying" jar-name)
+             (fs/create-dirs "target")
+             (fs/copy (str "../" jar-name)
+                      "target/graal-build-time.jar"
+                      {:replace-existing true})))}
+
+  build {:doc "Build classes and uberjar"
+         :depends [-artifact
+                   graal-build-time-jar]
+         :task
+         (if (seq (fs/modified-since -artifact ["src"
+                                                "bb.edn"
+                                                "deps.edn"
+                                                "build.clj"]))
+           (do
+             (println "Building" -artifact)
+             (clojure "-T:build uber"))
+           (println -artifact "already built"))}}}

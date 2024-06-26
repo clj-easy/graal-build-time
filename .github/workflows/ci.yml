@@ -45,8 +45,7 @@ jobs:
           - 'graalvm'
           - 'graalvm-community'
         java-version:
-          - '17.0.8'
-          - '20.0.2'
+          - '22.0.1'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3

@@ -1,6 +1,4 @@
-{:paths ["src"]
- :deps {lib1/lib1 {:local/root "lib1/target/lib1.jar"}
-        lib2/lib2 {:local/root "lib2/target/lib2.jar"}
+{:deps {org.clj-commons/digest {:mvn/version "1.4.100"}
         clj-easy/graal-build-time {:local/root "target/graal-build-time.jar"}}
  :aliases {:build {:deps {clj-easy/build-helper {:local/root "../build-helper"}}
                    :ns-default build}}}
