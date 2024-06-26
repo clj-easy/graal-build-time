@@ -62,6 +62,14 @@
   lint {:doc "[--rebuild] Lint source code with clj-kondo"
         :task lint/-main}
 
+  outdated {:doc "Report on outdated dependencies"
+            :task (clojure "-M:outdated" (str "--directory=" (str/join ":" ["."
+                                                                            "test-hello-world"
+                                                                            "test-hello-world/lib1"
+                                                                            "test-hello-world/lib2"
+                                                                            "test-single-segment"
+                                                                            "build-helper"])))}
+
   change-log-check {:doc "Checks that change log is ready for publish"
                     :task (bs/change-log-check)}
 
