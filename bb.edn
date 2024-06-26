@@ -23,7 +23,8 @@
          :task (do
                  (doseq [dir ["target" ".cpcache"]]
                    (fs/delete-tree dir))
-                 (shell {:dir "test-hello-world"} "bb clean"))}
+                 (doseq [dir ["test-hello-world" "test-single-segment"]]
+                   (shell {:dir dir} "bb clean")))}
 
   compile-sources {:doc "Compile sources"
                    :task (if (seq (fs/modified-since bs/class-dir ["deps.edn" "src"]))
@@ -46,6 +47,10 @@
   build-hello-world {:doc "Build jars, classes for testing"
                      :task (shell {:dir "test-hello-world"}
                                   "bb build")}
+
+  build-single-segment {:doc "Build jars, classes for single segment testing"
+                        :task (shell {:dir "test-single-segment"}
+                                     "bb build")}
 
   test {:doc "Runs tests"
         :task (clojure "-X:test")}

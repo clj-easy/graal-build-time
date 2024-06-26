@@ -74,6 +74,9 @@ Single segment namespaces are problematic in general in Clojure and, because the
 [clj-easy/graal-build-time] WARN: Single segment namespace found for class: digest__init.class. Because this class has no package, it cannot be registered for initialization at build time. 
 ```
 
+Starting with GraalVM v22, because it enables`--strict-image-heap` by default, you'll also see `native-image` fail your build when single segment namespaces are present.
+See https://github.com/clj-easy/graal-build-time/issues/35[#35] for details if you are curious.
+
 ## Develop
 
 Run `bb tasks` for all relevant project tasks.
