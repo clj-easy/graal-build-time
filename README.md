@@ -95,15 +95,11 @@ The work that this deprecated option carried out is now taken care of by `graal-
 - During native image creation, you'll see output that looks like:
 
     ```
-    [clj-easy/graal-build-time] WARN: Single segment namespace found for class: single_segment_example__init.class. Because this class has no package, it cannot be registered for initialization at build time.
     [clj-easy/graal-build-time] Registering packages for build time initialization: clojure, clj_easy.graal_build_time, gbt_test_org, hello, hello_world
     ```
-    Note:
-    - `[clj-easy/graal-build-time] Registering packages for build time initialization...` will always appear
-    - `[clj-easy/graal-build-time] WARN: Single segment namespace found...` will appear to warn you of the repercussions of a compiled Clojure single segment namespace found in your build.
 
 # License
 
 Licensed under the MIT license, see LICENSE.
 
-Copyright © 2021-2023 Michiel Borkent, Eric Dallo, Rahul Dé, Lee Read and contributors.
+Copyright © 2021-2024 Michiel Borkent, Eric Dallo, Rahul Dé, Lee Read and contributors.
