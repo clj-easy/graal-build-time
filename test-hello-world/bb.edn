@@ -5,8 +5,6 @@
   :enter (when (not (str/starts-with? (:name (current-task)) "-"))
            (println (format "-[hello-world %s]----" (:name (current-task)))))
   :init (do
-          (def windows? (str/starts-with? (System/getProperty "os.name")
-                                          "Windows"))
           (defn clojure
             "Clojure defaulting to stderr output"
             [arg & args]
@@ -84,34 +82,33 @@
   -native-image-uber-name
   "hello-world-uber"
 
-  -native-image-uber-fname
-  {:depends [-native-image-path -native-image-uber-name]
-   :task (str -native-image-path "/" -native-image-uber-name (when windows? ".exe"))}
-
   native-image-uber
   {:doc     "Builds native image from uber"
    :depends [build
              -graalvm-native-image-exe
-             -native-image-uber-fname
+             -native-image-path
              -native-image-uber-name]
-   :task (if (seq (fs/modified-since -native-image-uber-fname ["target/hello-world.jar"]))
-           (do
-             (println "Building" -native-image-uber-fname)
-             (shell -graalvm-native-image-exe
-                    ;; note: we are omitting --initialize-at-build-time
-                    "-jar" "target/hello-world.jar"
-                    "--features=clj_easy.graal_build_time.InitClojureClasses"
-                    "-O1" ;; basic optimization for faster build
-                    "--no-fallback"
-                    (str "-H:Path=" -native-image-path)
-                    (str "-H:Name=" -native-image-uber-name)))
-           (println "Already built" -native-image-uber-fname))}
+   :task (let [exe (str (fs/file -native-image-path -native-image-uber-name))
+               full-exe (str (fs/which exe))]
+           (if (seq (fs/modified-since full-exe ["target/hello-world.jar"]))
+             (do (println "Building" exe)
+                 (shell -graalvm-native-image-exe
+                        ;; note: we are omitting --initialize-at-build-time
+                        "-jar" "target/hello-world.jar"
+                        "--features=clj_easy.graal_build_time.InitClojureClasses"
+                        "-O1" ;; basic optimization for faster build
+                        "--no-fallback"
+                        "-o" exe))
+             (println "Already built" full-exe)))}
 
   native-image-uber-test
   {:doc "Run native image built from uber"
-   :depends [native-image-uber -native-image-uber-fname]
-   :task (do (println "Running" -native-image-uber-fname)
-             (shell -native-image-uber-fname))}
+   :depends [native-image-uber
+             -native-image-path
+             -native-image-uber-name]
+   :task (let [full-exe (str (fs/which (fs/file -native-image-path -native-image-uber-name)))]
+           (println "Running" full-exe)
+           (shell full-exe))}
 
   ;;
   ;; native image from classes
@@ -119,39 +116,37 @@
   -native-image-classes-name
   "hello-world-classes"
 
-  -native-image-classes-fname
-  {:depends [-native-image-path -native-image-classes-name]
-   :task (str -native-image-path "/" -native-image-classes-name (when windows? ".exe"))}
-
   native-image-classes
   {:doc     "Builds native image from classes"
    :depends [build
              -graalvm-native-image-exe
-             -native-image-classes-fname
+             -native-image-path
              -native-image-classes-name]
    :task
-   (do
-     (if (seq (fs/modified-since -native-image-classes-fname "target/classes"))
-       (do
-         (println "Building" -native-image-classes-fname)
-         (shell -graalvm-native-image-exe
-                ;; note: we are omitting --initialize-at-build-time
-                "-cp" (str "target/classes"
-                           (System/getProperty "path.separator")
-                           (-> (with-out-str (clojure "-Spath")) str/trim))
-                "--features=clj_easy.graal_build_time.InitClojureClasses"
-                "-O1" ;; basic optimization for faster build
-                "--no-fallback"
-                (str "-H:Path=" -native-image-path)
-                (str "-H:Name=" -native-image-classes-name)
-                "hello_world.main")))
-     (println "Already built" -native-image-classes-fname))}
+   (let [exe (str (fs/file -native-image-path -native-image-classes-name))
+         full-exe (str (fs/which exe))]
+     (if (seq (fs/modified-since exe "target/classes"))
+       (do (println "Building" exe)
+           (shell -graalvm-native-image-exe
+                  ;; note: we are omitting --initialize-at-build-time
+                  "-cp" (str "target/classes"
+                             (System/getProperty "path.separator")
+                             (-> (with-out-str (clojure "-Spath")) str/trim))
+                  "--features=clj_easy.graal_build_time.InitClojureClasses"
+                  "-O1" ;; basic optimization for faster build
+                  "--no-fallback"
+                  "-o" exe
+                  "hello_world.main")))
+     (println "Already built" full-exe))}
 
   native-image-classes-test
   {:doc "Run native image built from classes"
-   :depends [native-image-classes -native-image-classes-fname]
-   :task (do (println "Running" -native-image-classes-fname)
-             (shell -native-image-classes-fname))}
+   :depends [native-image-classes
+             -native-image-path
+             -native-image-classes-name]
+   :task (let [full-exe (str (fs/which (fs/file -native-image-path -native-image-classes-name)))]
+           (println "Running" full-exe)
+           (shell full-exe))}
 
   ;;
   ;; run all native image tests
