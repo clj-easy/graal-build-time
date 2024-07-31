@@ -22,8 +22,8 @@
   (b/javac {:src-dirs bs/sources
             :class-dir class-dir
             :basis with-svm-basis
-            :javac-opts ["--release" "8" ;; technically jdk 17 is current graal min, but clojure
-                                         ;; produces jdk 8 compat classes, so we'll arbitrarily
+            :javac-opts ["--release" "8" ;; technically current Graal jdk version is our current jdk min,
+                                         ;; but clojure produces jdk 8 compatible classes, so we'll arbitrarily
                                          ;; match that
                                          ;; --release was introduce after jdk8, so we'll fail
                                          ;; if compiling with <= jdk8, which is fine.
@@ -32,16 +32,25 @@
 
 (defn jar [_]
   (println "Producing jar:" jar-file)
-  (let [gh-coords "github.com/clj-easy/graal-build-time"]
+  (let [gh-coords "github.com/clj-easy/graal-build-time"
+        project-url (str "https://" gh-coords)]
     (b/write-pom {:class-dir class-dir
                   :lib lib
                   :version version
                   :scm {:connection (format "scm:git:git://%s.git" gh-coords)
                         :developerConnection (format "scm:git:ssh://git@%s.git" gh-coords)
                         :tag (format "v%s" version)
-                        :url (format "https://%s" gh-coords)}
+                        :url project-url}
                   :basis basis
-                  :src-dirs ["src"]}))
+                  :src-dirs ["src"]
+                  :pom-data [[:description "Initialize Clojure classes at build time with GraalVM native-image"]
+                             [:url project-url]
+                             [:licenses
+                              [:license
+                               [:name "The MIT License"]
+                               [:url "https://opensource.org/licenses/MIT"]]]
+                             [:properties
+                              [:project.build.sourceEncoding "UTF-8"]]]}))
   (b/copy-dir {:src-dirs ["src" "resources"]
                :target-dir class-dir})
   (b/jar {:class-dir class-dir

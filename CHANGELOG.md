@@ -3,7 +3,7 @@
 <!-- Our publish process updates Unreleased header appropriately, do not update by hand -->
 ## Unreleased
 
--
+- Add license (and other common entries) to library pom file [#44](https://github.com/clj-easy/graal-build-time/issues/44)
 
 ## v1.0.5
 
