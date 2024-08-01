@@ -27,8 +27,11 @@ This library automatically detects `.class` files created by Clojure and asks `n
 
 ## Usage
 
-We assume you are using a [current stable release of GraalVM](https://github.com/graalvm/graalvm-ce-builds/releases/).
-We don't support older releases.
+We assume you are using the current stable release of: 
+- [GraalVM Community Edition](https://github.com/graalvm/graalvm-ce-builds/releases/) or [GraalVM Oracle](https://www.graalvm.org/downloads/)
+- [Clojure](https://clojure.org/guides/install_clojure)
+
+We don't test against or support older releases.
 
 For your `native-image` build:
 1. If you are using `--initialize-at-build-time`, remove it.

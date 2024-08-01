@@ -4,6 +4,8 @@
 ## Unreleased
 
 - Add license (and other common entries) to library pom file [#44](https://github.com/clj-easy/graal-build-time/issues/44)
+- Minor
+  - Build, test and release `graal-build-time` with current version of Clojure [#46](https://github.com/clj-easy/graal-build-time/issues/46)
 
 ## v1.0.5
 
