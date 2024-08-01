@@ -98,6 +98,7 @@
                         "--features=clj_easy.graal_build_time.InitClojureClasses"
                         "-O1" ;; basic optimization for faster build
                         "--no-fallback"
+                        "--verbose"
                         "-o" exe))
              (println "Already built" full-exe)))}
 
@@ -135,6 +136,7 @@
                   "--features=clj_easy.graal_build_time.InitClojureClasses"
                   "-O1" ;; basic optimization for faster build
                   "--no-fallback"
+                  "--verbose"
                   "-o" exe
                   "hello_world.main")))
      (println "Already built" full-exe))}
