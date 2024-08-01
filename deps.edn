@@ -10,7 +10,7 @@
                  slipset/deps-deploy {:mvn/version "0.2.2"}}
           :ns-default build}
   :uber {:extra-paths ["test"]}
-  :clj-kondo {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2024.05.24"}}
+  :clj-kondo {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2024.08.01"}}
               :main-opts ["-m" "clj-kondo.main"]}
   :test {:extra-paths ["test"]
          :extra-deps {io.github.cognitect-labs/test-runner
