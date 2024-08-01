@@ -23,7 +23,7 @@
                    with-out-str
                    string/trim)
         bb-cp (bbcp/get-classpath)]
-    (status/line :detail "- copying libs and creating cache")
+    (status/line :detail "- copying lib configs and creating cache")
     (t/clojure "-M:clj-kondo --skip-lint --copy-configs --dependencies --parallel --lint" clj-cp bb-cp)))
 
 (defn- check-cache [{:keys [rebuild]}]
