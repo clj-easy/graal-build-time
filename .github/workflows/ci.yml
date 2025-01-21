@@ -13,10 +13,10 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
 
       - name: Setup Babashka
-        uses: DeLaGuardo/setup-clojure@12.5
+        uses: DeLaGuardo/setup-clojure@13.1
         with:
           bb: 'latest'
 
@@ -58,7 +58,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Babashka
-        uses: DeLaGuardo/setup-clojure@12.5
+        uses: DeLaGuardo/setup-clojure@13.1
         with:
           bb: 'latest'
 
@@ -93,7 +93,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Babashka
-        uses: DeLaGuardo/setup-clojure@12.5
+        uses: DeLaGuardo/setup-clojure@13.1
         with:
           bb: 'latest'
 
@@ -102,7 +102,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
 
       - name: Tools versions
         run: |
