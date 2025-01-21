@@ -1,4 +1,4 @@
-{:deps {org.clojure/clojure {:mvn/version "1.11.3"}
+{:deps {org.clojure/clojure {:mvn/version "1.12.0"}
         org.clj-commons/digest {:mvn/version "1.4.100"}
         clj-easy/graal-build-time {:local/root "target/graal-build-time.jar"}}
  :aliases {:build {:deps {clj-easy/build-helper {:local/root "../build-helper"}}
