@@ -1,5 +1,5 @@
 {:paths ["src"]
- :deps {org.clojure/clojure {:mvn/version "1.12.1"}
+ :deps {org.clojure/clojure {:mvn/version "1.12.2"}
         lib1/lib1 {:local/root "lib1/target/lib1.jar"}
         lib2/lib2 {:local/root "lib2/target/lib2.jar"}
         clj-easy/graal-build-time {:local/root "target/graal-build-time.jar"}}
