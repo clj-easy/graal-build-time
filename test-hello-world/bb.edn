@@ -89,7 +89,7 @@
              -native-image-path
              -native-image-uber-name]
    :task (let [exe (str (fs/file -native-image-path -native-image-uber-name))
-               full-exe (str (fs/which exe))]
+               full-exe (fs/which exe)]
            (if (seq (fs/modified-since full-exe ["target/hello-world.jar"]))
              (do (println "Building" exe)
                  (shell -graalvm-native-image-exe
@@ -100,7 +100,7 @@
                         "--no-fallback"
                         "--verbose"
                         "-o" exe))
-             (println "Already built" full-exe)))}
+             (println "Already built" (str full-exe))))}
 
   native-image-uber-test
   {:doc "Run native image built from uber"
@@ -125,7 +125,7 @@
              -native-image-classes-name]
    :task
    (let [exe (str (fs/file -native-image-path -native-image-classes-name))
-         full-exe (str (fs/which exe))]
+         full-exe (fs/which exe)]
      (if (seq (fs/modified-since exe "target/classes"))
        (do (println "Building" exe)
            (shell -graalvm-native-image-exe
@@ -139,7 +139,7 @@
                   "--verbose"
                   "-o" exe
                   "hello_world.main")))
-     (println "Already built" full-exe))}
+     (println "Already built" (str full-exe)))}
 
   native-image-classes-test
   {:doc "Run native image built from classes"

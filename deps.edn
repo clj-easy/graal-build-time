@@ -1,16 +1,16 @@
-{:deps {org.clojure/clojure {:mvn/version "1.12.2"}}
+{:deps {org.clojure/clojure {:mvn/version "1.12.3"}}
  :paths ["src" "resources"]
  :aliases
  {:svm
   ;; this library is "provided"
-  {:extra-deps {org.graalvm.sdk/nativeimage {:mvn/version "25.0.0"}}}
-  :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.10"}
+  {:extra-deps {org.graalvm.sdk/nativeimage {:mvn/version "25.0.1"}}}
+  :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.11"}
                  babashka/fs {:mvn/version "0.5.27"}
                  babashka/process {:mvn/version "0.6.23"}
                  slipset/deps-deploy {:mvn/version "0.2.2"}}
           :ns-default build}
   :uber {:extra-paths ["test"]}
-  :clj-kondo {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2025.07.28"}}
+  :clj-kondo {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2025.10.23"}}
               :main-opts ["-m" "clj-kondo.main"]}
   :test {:extra-paths ["test"]
          :extra-deps {io.github.cognitect-labs/test-runner
