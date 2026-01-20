@@ -1,6 +1,5 @@
 (ns lint
-  (:require [babashka.classpath :as bbcp]
-            [babashka.cli :as cli]
+  (:require [babashka.cli :as cli]
             [babashka.fs :as fs]
             [babashka.tasks :as t]
             [clojure.string :as string]
@@ -22,7 +21,10 @@
                               "-Spath -M:test:build")
                    with-out-str
                    string/trim)
-        bb-cp (bbcp/get-classpath)]
+        bb-cp (-> (t/shell {:out :string}
+                           "bb print-deps --format classpath")
+                  :out
+                  string/trim)]
     (status/line :detail "- copying lib configs and creating cache")
     (t/clojure "-M:clj-kondo --skip-lint --copy-configs --dependencies --parallel --lint" clj-cp bb-cp)))
 
