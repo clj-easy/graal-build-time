@@ -1,5 +1,4 @@
 (ns build
-  (:refer-clojure :exclude [compile])
   (:require
    [build-shared :as bs :refer [lib]]
    [clojure.tools.build.api :as b]

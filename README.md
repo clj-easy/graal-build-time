@@ -105,4 +105,4 @@ The work that this deprecated option carried out is now taken care of by `graal-
 
 Licensed under the MIT license, see LICENSE.
 
-Copyright © 2021-2024 Michiel Borkent, Eric Dallo, Rahul Dé, Lee Read and contributors.
+Copyright © 2021-2026 Michiel Borkent, Eric Dallo, Rahul Dé, Lee Read and contributors.
