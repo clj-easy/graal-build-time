@@ -3,7 +3,7 @@
  :aliases
  {:svm
   ;; this library is "provided"
-  {:extra-deps {org.graalvm.sdk/nativeimage {:mvn/version "25.0.1"}}}
+  {:extra-deps {org.graalvm.sdk/nativeimage {:mvn/version "25.0.2"}}}
   :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.12"}
                  babashka/fs {:mvn/version "0.5.30"}
                  babashka/process {:mvn/version "0.6.25"}
