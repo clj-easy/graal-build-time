@@ -11,7 +11,8 @@
 (defn ^:private entry->package [nm split]
   (let [package (->> (str/split nm (re-pattern (str/re-quote-replacement split)))
                      drop-last
-                     (str/join "."))]
+                     (str/join ".")
+                     munge)]
     (when (str/blank? package)
       (println (str "[clj-easy/graal-build-time] WARN: Single segment namespace found for class: " nm ". "
                     "Because this class has no package, it cannot be registered for initialization at build time.")))
