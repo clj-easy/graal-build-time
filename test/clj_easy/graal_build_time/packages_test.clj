@@ -7,7 +7,7 @@
 (deftest hello-world-package-list-test
   (-> (p/process ["bb" "build-hello-world"] {:inherit true})
       (p/check))
-  (let [expected-packages "clojure, clj_easy.graal_build_time, gbt_test_org, hello, hello_world"]
+  (let [expected-packages "clojure, clj_easy.graal_build_time, gbt_PLUS_test, gbt_test_org, hello, hello_world"]
     (testing "packages from directory"
       (is (= expected-packages
              (-> (packages/-list (->> ["test-hello-world/target/classes"
