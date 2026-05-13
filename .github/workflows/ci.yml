@@ -38,15 +38,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - 'ubuntu'
-          - 'windows'
-        # As of this writing there is a slight version mismatch between latest version for distros
+        # As of this writing there is a slight version mismatch between latest version for distributions
         include:
-          - distribution: 'graalvm'
-            java-version: '25.0.3'
-          - distribution: 'graalvm-community'
-            java-version: '25.0.2'
+          - {distribution: 'graalvm', java-version: '25.0.3', os: 'windows'}
+          - {distribution: 'graalvm', java-version: '25.0.3', os: 'ubuntu'}
+          - {distribution: 'graalvm-community', java-version: '25.0.2', os: 'windows'}
+          - {distribution: 'graalvm-community', java-version: '25.0.2', os: 'ubuntu'}
 
     steps:
       - name: Checkout code
