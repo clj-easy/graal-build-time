@@ -3,6 +3,10 @@
 <!-- Our publish process updates Unreleased header appropriately, do not update by hand -->
 ## Unreleased
 
+-
+
+## v1.0.6
+
 - Add license (and other common entries) to library pom file [#44](https://github.com/clj-easy/graal-build-time/issues/44)
 - Munge package names so namespaces containing chars like `+` (e.g. `clojure+.walk`) are registered using their Java package name (e.g. `clojure_PLUS_`) where AOT-generated classes actually live [#55](https://github.com/clj-easy/graal-build-time/pull/55)
 - Minor
