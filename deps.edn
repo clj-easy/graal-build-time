@@ -4,7 +4,7 @@
  {:svm
   ;; this library is "provided"
   {:extra-deps {org.graalvm.sdk/nativeimage {:mvn/version "25.0.3"}}}
-  :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.13"}
+  :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.14"}
                  babashka/fs {:mvn/version "0.5.34"}
                  babashka/process {:mvn/version "0.6.25"}
                  slipset/deps-deploy {:mvn/version "0.2.3"}}
