@@ -7,7 +7,7 @@
   :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.14"}
                  babashka/fs {:mvn/version "0.5.34"}
                  babashka/process {:mvn/version "0.6.25"}
-                 slipset/deps-deploy {:mvn/version "0.2.3"}}
+                 slipset/deps-deploy {:mvn/version "0.2.5"}}
           :ns-default build}
   :uber {:extra-paths ["test"]}
   :clj-kondo {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2026.07.24"}}
