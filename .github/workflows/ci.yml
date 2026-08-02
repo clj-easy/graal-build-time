@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup Java
         uses: actions/setup-java@v5
@@ -16,12 +16,12 @@ jobs:
           java-version: '21'
 
       - name: Setup Babashka
-        uses: DeLaGuardo/setup-clojure@13.6.0
+        uses: DeLaGuardo/setup-clojure@13.6.1
         with:
           bb: 'latest'
 
       - name: Apply Cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: |
             ~/.m2/repository
@@ -38,26 +38,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # As of this writing there is a slight version mismatch between latest version for distributions
-        include:
-          - {distribution: 'graalvm', java-version: '25.0.3', os: 'windows'}
-          - {distribution: 'graalvm', java-version: '25.0.3', os: 'ubuntu'}
-          - {distribution: 'graalvm-community', java-version: '25.0.2', os: 'windows'}
-          - {distribution: 'graalvm-community', java-version: '25.0.2', os: 'ubuntu'}
+        version: ['25.2.4']
+        os: ['ubuntu', 'windows']
+        distribution: ['graalvm', 'graalvm-community']
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup GraalVM
         uses: graalvm/setup-graalvm@v1
         with:
-          java-version: ${{ matrix.java-version }}
+          version: ${{ matrix.version }}
           distribution: ${{ matrix.distribution }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Babashka
-        uses: DeLaGuardo/setup-clojure@13.6.0
+        uses: DeLaGuardo/setup-clojure@13.6.1
         with:
           bb: 'latest'
 
@@ -67,7 +64,7 @@ jobs:
           bb --version
 
       - name: Apply Cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: |
             ~/.m2/repository
@@ -89,10 +86,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup Babashka
-        uses: DeLaGuardo/setup-clojure@13.6.0
+        uses: DeLaGuardo/setup-clojure@13.6.1
         with:
           bb: 'latest'
 
@@ -109,7 +106,7 @@ jobs:
           bb --version
 
       - name: Apply Cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: |
             ~/.m2/repository
