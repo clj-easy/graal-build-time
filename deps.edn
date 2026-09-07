@@ -1,22 +1,22 @@
-{:deps {org.clojure/clojure {:mvn/version "1.12.5"}}
+{:deps {org.clojure/clojure {:mvn/version "1.12.6"}}
  :paths ["src" "resources"]
  :aliases
  {:svm
   ;; this library is "provided"
-  {:extra-deps {org.graalvm.sdk/nativeimage {:mvn/version "25.2.4"}}}
+  {:extra-deps {org.graalvm.sdk/nativeimage {:mvn/version "25.3.4.1"}}}
   :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.14"}
                  babashka/fs {:mvn/version "0.5.34"}
                  babashka/process {:mvn/version "0.6.25"}
                  slipset/deps-deploy {:mvn/version "0.2.5"}}
           :ns-default build}
   :uber {:extra-paths ["test"]}
-  :clj-kondo {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2026.07.24"}}
+  :clj-kondo {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2026.08.04"}}
               :main-opts ["-m" "clj-kondo.main"]}
   :test {:extra-paths ["test"]
          :extra-deps {io.github.cognitect-labs/test-runner
                       {:git/tag "v0.5.1" :git/sha "dfb30dd"}
                       babashka/process {:mvn/version "0.6.25"}}
          :exec-fn cognitect.test-runner.api/test}
-  :outdated {:deps {org.slf4j/slf4j-simple {:mvn/version "2.0.18"} ;; to rid ourselves of logger warnings
+  :outdated {:deps {org.slf4j/slf4j-simple {:mvn/version "2.0.19"} ;; to rid ourselves of logger warnings
                     com.github.liquidz/antq {:mvn/version "2.11.1276"}}
              :main-opts ["-m" "antq.core"]}}}
