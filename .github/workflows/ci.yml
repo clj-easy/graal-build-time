@@ -38,9 +38,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ['25.2.4']
+        version: ['25.3.4.1']
         os: ['ubuntu', 'windows']
-        distribution: ['graalvm', 'graalvm-community']
+        distribution:
+          - { name: 'graalvm', short-name: 'graal' }
+          - { name: 'graalvm-community', short-name: 'graalce' }
+
+    name: test ${{matrix.os}} ${{matrix.distribution.short-name}}${{matrix.version}} 
 
     steps:
       - name: Checkout code
@@ -50,7 +54,7 @@ jobs:
         uses: graalvm/setup-graalvm@v1
         with:
           version: ${{ matrix.version }}
-          distribution: ${{ matrix.distribution }}
+          distribution: ${{ matrix.distribution.name }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Babashka
