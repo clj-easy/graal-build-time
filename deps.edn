@@ -17,6 +17,6 @@
                       {:git/tag "v0.5.1" :git/sha "dfb30dd"}
                       babashka/process {:mvn/version "0.6.25"}}
          :exec-fn cognitect.test-runner.api/test}
-  :outdated {:deps {org.slf4j/slf4j-simple {:mvn/version "2.0.18"} ;; to rid ourselves of logger warnings
+  :outdated {:deps {org.slf4j/slf4j-simple {:mvn/version "2.0.19"} ;; to rid ourselves of logger warnings
                     com.github.liquidz/antq {:mvn/version "2.11.1276"}}
              :main-opts ["-m" "antq.core"]}}}
